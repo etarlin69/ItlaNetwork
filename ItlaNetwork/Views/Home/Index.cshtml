@@ -1,0 +1,34 @@
+﻿@using ItlaNetwork.Core.Application.ViewModels.Home
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="main-container">
+    <div class="row">
+        <div class="col-12">
+
+            <partial name="_CreatePostForm" model="Model.NewPost" />
+
+            <div class="feed-container">
+                @if (Model.Posts == null || !Model.Posts.Any())
+                {
+                    <div class="text-center text-white-50 mt-5">
+                        <h4>No hay publicaciones para mostrar.</h4>
+                        <p>¡Sé el primero en publicar algo!</p>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var post in Model.Posts)
+                    {
+                        <div class="glass-card">
+                            <partial name="_PostCard" model="post" />
+                        </div>
+                    }
+                }
+            </div>
+
+        </div>
+    </div>
+</div>

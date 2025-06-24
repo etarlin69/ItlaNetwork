@@ -1,0 +1,409 @@
+﻿/*
+ * =========================================
+ * ESTILOS GLOBALES Y LAYOUT PRINCIPAL
+ * =========================================
+*/
+
+/* --- Estructura Flexbox para el Layout --- */
+.main-body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #2a0d45;
+    color: #e2e8f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header, footer {
+    flex-shrink: 0;
+}
+
+.main-content-area {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+    /* --- ESTILOS PARA LA BARRA DE SCROLL (ACTUALIZADO PARA SER REUTILIZABLE) --- */
+    .main-content-area::-webkit-scrollbar,
+    .comment-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .main-content-area::-webkit-scrollbar-track,
+    .comment-list::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+    }
+
+    .main-content-area::-webkit-scrollbar-thumb,
+    .comment-list::-webkit-scrollbar-thumb {
+        background-color: #DA4453;
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+    }
+
+        .main-content-area::-webkit-scrollbar-thumb:hover,
+        .comment-list::-webkit-scrollbar-thumb:hover {
+            background-color: #89216B;
+        }
+
+/* ... (El resto de los estilos de navbar, panel de vidrio, etc. no cambian) ... */
+.glass-panel {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.navbar-logo {
+    height: 40px;
+    width: auto;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
+}
+
+.dropdown-menu.bg-dark-transparent {
+    background-color: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.dropdown-item.text-light:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.secondary-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+    .secondary-nav .nav-link {
+        color: #a0aec0;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .secondary-nav .nav-link:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .secondary-nav .nav-link.active {
+            color: #fff;
+            background-color: #DA4453;
+        }
+
+.feed-container {
+    padding: 5px;
+    border-radius: 0.75rem;
+}
+
+.glass-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.post-card-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 1rem;
+}
+
+    .post-card-header .profile-pic {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        margin-right: 15px;
+        object-fit: cover;
+        border: 2px solid rgba(255,255,255,0.3);
+    }
+
+.post-card-body .post-content {
+    white-space: pre-wrap;
+    padding: 0;
+    margin: 0;
+}
+
+.post-card-image {
+    width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+}
+
+.profile-pic-container {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 15px;
+    border: 2px solid rgba(255,255,255,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.profile-pic-default {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.glass-card textarea.form-control {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    resize: none;
+}
+
+    .glass-card textarea.form-control:focus {
+        background-color: rgba(0, 0, 0, 0.3);
+        color: #fff;
+        box-shadow: none;
+        border-color: #DA4453;
+    }
+
+.btn-file-upload {
+    border-color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+    .btn-file-upload:hover {
+        border-color: #fff;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+
+.btn-gradient {
+    background-image: linear-gradient(to right, #DA4453 0%, #89216B 51%, #DA4453 100%);
+    padding: 10px 30px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    border-radius: 10px;
+    display: block;
+    border: none;
+    font-weight: bold;
+}
+
+    .btn-gradient:hover {
+        background-position: right center;
+    }
+
+footer.footer {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+}
+
+
+/*
+ * =========================================
+ * ESTILOS PARA COMENTARIOS (ACTUALIZADO)
+ * =========================================
+*/
+
+.comments-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* === REGLA AÑADIDA PARA EL SCROLL DE COMENTARIOS === */
+.comment-list {
+    max-height: 220px; /* Altura máxima para aprox. 3 comentarios */
+    overflow-y: auto; /* Activa el scroll vertical SÓLO si es necesario */
+    padding-right: 10px; /* Espacio para que el scrollbar no se pegue al contenido */
+}
+
+.comment-item {
+    display: flex;
+    margin-bottom: 1rem;
+}
+
+.commenter-pic {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.comment-content {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    width: 100%;
+}
+
+.commenter-name {
+    font-weight: bold;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.comment-text {
+    font-size: 0.95rem;
+}
+
+.comment-form-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+    .comment-form-container.active {
+        max-height: 200px;
+    }
+
+.comment-form {
+    display: flex;
+    gap: 10px;
+}
+
+    .comment-form textarea {
+        background-color: rgba(0, 0, 0, 0.2) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: #fff !important;
+        border-radius: 20px !important;
+        resize: none;
+        font-size: 0.9rem;
+        padding-left: 15px;
+        flex-grow: 1;
+    }
+
+        .comment-form textarea:focus {
+            box-shadow: none;
+            border-color: #DA4453 !important;
+        }
+
+.no-comments-message {
+    padding: 1.5rem;
+    text-align: center;
+    color: #94a3b8; /* Un color grisáceo sutil */
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* --- Estilos para Reacciones --- */
+.reaction-btn {
+    color: #a0aec0; /* Color grisáceo por defecto */
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 6px; /* Espacio entre el icono y el contador */
+}
+
+    .reaction-btn:hover {
+        color: #fff;
+    }
+
+    /* Oculta el icono sólido por defecto */
+    .reaction-btn .fa-solid {
+        display: none;
+    }
+    /* Muestra el icono de contorno por defecto */
+    .reaction-btn .fa-regular {
+        display: inline-block;
+    }
+
+    /* Cuando el botón está activo, oculta el icono de contorno */
+    .reaction-btn.active .fa-regular {
+        display: none;
+    }
+    /* Y muestra el icono sólido */
+    .reaction-btn.active .fa-solid {
+        display: inline-block;
+    }
+
+    /* Estado activo para el botón de "Me Gusta" */
+    .reaction-btn.like.active {
+        color: #ef4444; /* Rojo para el like */
+    }
+
+    /* Estado activo para el botón de "No me Gusta" */
+    .reaction-btn.dislike.active {
+        color: #fff; /* Blanco brillante para el dislike */
+    }
+
+.reaction-count {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.user-list-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.2s ease-in-out;
+}
+
+    .user-list-item:last-child {
+        border-bottom: none;
+    }
+
+    .user-list-item:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .user-list-item img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+        object-fit: cover;
+    }
+
+    .user-list-item .user-info {
+        flex-grow: 1;
+    }
+
+    .user-list-item .user-name {
+        font-weight: bold;
+        color: #fff;
+    }
+
+    .user-list-item .user-details {
+        font-size: 0.85rem;
+        color: #a0aec0;
+    }
+
+    .user-list-item .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+.modal-content {
+    /* Aplicamos el mismo efecto de vidrio de las tarjetas */
+    background-color: rgba(42, 13, 19, 0.85); /* Un poco más oscuro para que resalte */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 0.75rem;
+}
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}

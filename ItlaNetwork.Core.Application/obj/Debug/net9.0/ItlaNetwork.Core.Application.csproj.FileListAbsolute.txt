@@ -1,0 +1,15 @@
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\obj\Debug\net9.0\ItlaNetwork.Core.Application.csproj.AssemblyReference.cache
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\obj\Debug\net9.0\ItlaNetwork.Core.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\obj\Debug\net9.0\ItlaNetwork.Core.Application.AssemblyInfoInputs.cache
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\obj\Debug\net9.0\ItlaNetwork.Core.Application.AssemblyInfo.cs
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\obj\Debug\net9.0\ItlaNetwork.Core.Application.csproj.CoreCompileInputs.cache
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\bin\Debug\net9.0\ItlaNetwork.Core.Application.deps.json
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\bin\Debug\net9.0\ItlaNetwork.Core.Application.dll
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\bin\Debug\net9.0\ItlaNetwork.Core.Application.pdb
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\bin\Debug\net9.0\ItlaNetwork.Core.Domain.dll
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\bin\Debug\net9.0\ItlaNetwork.Core.Domain.pdb
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\obj\Debug\net9.0\ItlaNetw.8C6D98C5.Up2Date
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\obj\Debug\net9.0\ItlaNetwork.Core.Application.dll
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\obj\Debug\net9.0\refint\ItlaNetwork.Core.Application.dll
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\obj\Debug\net9.0\ItlaNetwork.Core.Application.pdb
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Application\obj\Debug\net9.0\ref\ItlaNetwork.Core.Application.dll

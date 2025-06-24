@@ -1,0 +1,133 @@
+﻿/*
+ * Estilos para las páginas de Account (Login, Register, etc.)
+ * Versión definitiva con animación y hack de autocompletado mejorado.
+*/
+
+.account-body {
+    background-color: #2a0d45;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 2.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    width: 100%;
+    max-width: 420px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.register-card {
+    max-width: 750px;
+}
+
+/* --- Lógica de Animación de Etiqueta Personalizada --- */
+
+.input-group-icon {
+    position: relative;
+}
+
+    .input-group-icon .form-control {
+        color: #fff;
+        background-color: transparent;
+        border: none;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 0;
+        padding: 1rem 1rem 1rem 2.5rem;
+    }
+
+        .input-group-icon .form-control:focus {
+            box-shadow: none;
+            border-bottom-color: #fff;
+        }
+
+    .input-group-icon label {
+        color: rgba(255, 255, 255, 0.7);
+        position: absolute;
+        top: 1rem;
+        left: 2.5rem;
+        pointer-events: none;
+        transition: all 0.2s ease-out;
+    }
+
+    .input-group-icon .form-control:focus + label,
+    .input-group-icon .form-control:not(:placeholder-shown) + label {
+        top: -0.5rem;
+        left: 0.75rem;
+        font-size: 0.8rem;
+        color: #fff;
+    }
+
+    .input-group-icon .input-icon {
+        position: absolute;
+        top: 1rem;
+        left: 0.75rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+/*
+ * ==== BLOQUE MODIFICADO ====
+ * Hack para sobreescribir los estilos de AUTOCOMPLETADO del navegador.
+*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: #fff !important;
+    /* Se cambia el color para que imite mejor el fondo de la tarjeta */
+    -webkit-box-shadow: 0 0 0 30px #3c2a51 inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+/* ==== FIN DEL BLOQUE ==== */
+
+
+/* --- Estilos para el Logo --- */
+.account-logo {
+    display: block;
+    max-width: 275px;
+    height: auto;
+    margin: 0 auto 1.5rem auto;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+}
+
+/* --- Otros estilos --- */
+.btn-login {
+    background-image: linear-gradient(to right, #DA4453 0%, #89216B 51%, #DA4453 100%);
+    padding: 15px 45px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #2b1a37;
+    border-radius: 10px;
+    display: block;
+    border: none;
+    font-weight: bold;
+}
+
+    .btn-login:hover {
+        background-position: right center;
+    }
+
+.register-link a {
+    color: #f8f9fa;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+
+h2 {
+    color: #fff;
+    font-weight: 300;
+}

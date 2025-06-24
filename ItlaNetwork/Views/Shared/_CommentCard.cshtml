@@ -1,0 +1,19 @@
+﻿@using ItlaNetwork.Core.Application.ViewModels.Comment
+@model CommentViewModel
+
+<div class="comment-item">
+    <div class="profile-pic-container commenter-pic">
+        @if (!string.IsNullOrEmpty(Model.AuthorProfilePictureUrl))
+        {
+            <img src="@Model.AuthorProfilePictureUrl" alt="Foto de perfil de @Model.AuthorFullName" class="profile-pic" />
+        }
+        else
+        {
+            <i class="fa-solid fa-user-astronaut profile-pic-default" style="font-size:1.1rem"></i>
+        }
+    </div>
+    <div class="comment-content">
+        <div class="commenter-name">@Model.AuthorFullName</div>
+        <div class="comment-text">@Model.Content</div>
+    </div>
+</div>

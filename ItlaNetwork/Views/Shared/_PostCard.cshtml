@@ -1,0 +1,80 @@
+﻿@using ItlaNetwork.Core.Application.ViewModels.Post
+@model PostViewModel
+
+<div class="post-card-header">
+    <div class="profile-pic-container">
+        @if (!string.IsNullOrEmpty(Model.AuthorProfilePictureUrl))
+        {
+            <img src="@Model.AuthorProfilePictureUrl" alt="Foto de perfil de @Model.AuthorFullName" class="profile-pic" />
+        }
+        else
+        {
+            <i class="fa-solid fa-user-astronaut profile-pic-default"></i>
+        }
+    </div>
+    <div class="author-info">
+        <div class="author-name">@Model.AuthorFullName</div>
+        <div class="post-date">@Model.CreatedAtFormatted</div>
+    </div>
+</div>
+<div class="post-card-body">
+    <p class="post-content">@Model.Content</p>
+
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" class="img-fluid rounded post-card-image" alt="Imagen de la publicación" />
+    }
+</div>
+<div class="card-footer bg-transparent border-top-0 pt-3 d-flex align-items-center gap-4">
+
+    @{
+        var likeBtnClass = Model.CurrentUserReaction == ItlaNetwork.Core.Application.Enums.ReactionType.Like ? "like active" : "like";
+        var dislikeBtnClass = Model.CurrentUserReaction == ItlaNetwork.Core.Application.Enums.ReactionType.Dislike ? "dislike active" : "dislike";
+    }
+
+    <a href="#" class="reaction-btn @likeBtnClass" data-post-id="@Model.Id" data-reaction-type="Like">
+        <span class="reaction-icon-container">
+            <i class="fa-solid fa-heart"></i>
+            <i class="fa-regular fa-heart"></i>
+        </span>
+        <span class="like-count">@Model.LikeCount</span>
+    </a>
+
+    <a href="#" class="reaction-btn @dislikeBtnClass" data-post-id="@Model.Id" data-reaction-type="Dislike">
+        <span class="reaction-icon-container">
+            <i class="fa-solid fa-thumbs-down"></i>
+            <i class="fa-regular fa-thumbs-down"></i>
+        </span>
+        <span class="dislike-count">@Model.DislikeCount</span>
+    </a>
+
+    <a href="#" class="text-white-50 text-decoration-none toggle-comment-form ms-auto"><i class="fa-regular fa-comment"></i> Comentar</a>
+</div>
+
+<div class="comments-section">
+
+    <div class="comment-list" id="comment-list-@Model.Id">
+        @if (Model.Comments != null && Model.Comments.Any())
+        {
+            @foreach (var comment in Model.Comments)
+            {
+                <partial name="_CommentCard" model="comment" />
+            }
+        }
+        else
+        {
+            <div class="no-comments-message">
+                No hay comentarios todavía. ¡Sé el primero en comentar!
+            </div>
+        }
+    </div>
+
+    <div class="comment-form-container">
+        <form asp-controller="Comment" asp-action="Create" method="post" class="comment-form new-comment-form">
+            <input type="hidden" name="PostId" value="@Model.Id" />
+            <textarea name="Content" class="form-control" rows="1" placeholder="Escribe un comentario..."></textarea>
+            <button type="submit" class="btn btn-gradient btn-sm">Enviar</button>
+        </form>
+    </div>
+
+</div>
