@@ -1,12 +1,11 @@
 ﻿using ItlaNetwork.Core.Application.ViewModels.Comment;
-using System.Threading.Tasks;
+using ItlaNetwork.Core.Domain.Entities;
 
 namespace ItlaNetwork.Core.Application.Interfaces.Services
 {
-    public interface ICommentService
+    // ICommentService inherits from the generic service for basic CRUD.
+    public interface ICommentService : IGenericService<SaveCommentViewModel, CommentViewModel, Comment>
     {
-        // Definimos un método para añadir un comentario, que necesitará
-        // el ViewModel y el ID del usuario que está comentando.
-        Task<CommentViewModel> Add(SaveCommentViewModel vm, string userId);
+        // Add specific methods for comments here if needed in the future.
     }
 }

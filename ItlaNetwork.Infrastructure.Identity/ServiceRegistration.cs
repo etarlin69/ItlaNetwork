@@ -10,68 +10,68 @@ using System;
 
 namespace ItlaNetwork.Infrastructure.Identity
 {
-    // Clase estática para registrar los servicios de esta capa mediante un método de extensión.
+    // Static class to register the services of this layer using an extension method.
     public static class ServiceRegistration
     {
-        // Método de extensión para IServiceCollection que encapsula toda la configuración de Identity.
+        // Extension method for IServiceCollection that encapsulates all Identity configuration.
         public static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             #region DbContext
-            // Registra el DbContext específico de Identity, configurándolo para usar SQL Server.
-            // Se obtiene la cadena de conexión desde appsettings.json.
-            // Se especifica el ensamblado donde se guardarán las migraciones para este DbContext.
+            // Registers the Identity-specific DbContext, configuring it to use SQL Server.
+            // The connection string is obtained from appsettings.json.
+            // The assembly where migrations for this DbContext will be stored is specified.
             services.AddDbContext<IdentityContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("IdentityConnection"),
                 b => b.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName)));
             #endregion
 
             #region Identity
-            // Configura el sistema de Identity de ASP.NET Core.
-            // Se especifica la clase de usuario (ApplicationUser) y la clase de rol (IdentityRole).
-            // Se vincula con Entity Framework a través de nuestro IdentityContext.
-            // AddDefaultTokenProviders() habilita los proveedores para generar tokens (ej. para resetear contraseña o confirmar email).
+            // Configures the ASP.NET Core Identity system.
+            // The user class (ApplicationUser) and role class (IdentityRole) are specified.
+            // It is linked with Entity Framework through our IdentityContext.
+            // AddDefaultTokenProviders() enables providers to generate tokens (e.g., for password reset or email confirmation).
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();
 
-            // Configura las opciones y políticas de Identity para todo el sistema.
+            // Configures the Identity options and policies for the entire system.
             services.Configure<IdentityOptions>(options =>
             {
-                // Opciones de Contraseña.
+                // Password Options.
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = true;
-                options.Password.RequireNonAlphanumeric = false; // El documento no lo especifica, se puede cambiar a true si se desea.
+                options.Password.RequireNonAlphanumeric = false; // The document doesn't specify, can be changed to true if desired.
                 options.Password.RequiredLength = 8;
 
-                // Opciones de Bloqueo de Cuenta.
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Tiempo de bloqueo.
-                options.Lockout.MaxFailedAccessAttempts = 3; // Intentos fallidos antes de bloquear.
+                // Account Lockout Options.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Lockout duration.
+                options.Lockout.MaxFailedAccessAttempts = 3; // Failed attempts before lockout.
                 options.Lockout.AllowedForNewUsers = true;
 
-                // Opciones de Usuario.
-                options.User.RequireUniqueEmail = true; // Asegura que cada correo electrónico sea único en el sistema.
+                // User Options.
+                options.User.RequireUniqueEmail = true; // Ensures that each email is unique in the system.
 
-                // Opciones de Inicio de Sesión.
-                options.SignIn.RequireConfirmedEmail = true; // Requiere que el correo sea confirmado para poder iniciar sesión.
+                // Sign-In Options.
+                options.SignIn.RequireConfirmedEmail = true; // Requires email to be confirmed to be able to sign in.
             });
             #endregion
 
             #region Authentication
-            // Configura el comportamiento de las cookies de autenticación.
+            // Configures the behavior of the authentication cookies.
             services.ConfigureApplicationCookie(options =>
             {
-                // Define la ruta a la que será redirigido un usuario no autenticado que intente acceder a un recurso protegido.
+                // Defines the path to which an unauthenticated user trying to access a protected resource will be redirected.
                 options.LoginPath = "/Account/Login";
-                // Define la ruta a la que será redirigido un usuario que no tenga los permisos necesarios.
+                // Defines the path to which a user who does not have the necessary permissions will be redirected.
                 options.AccessDeniedPath = "/Account/AccessDenied";
-                options.ExpireTimeSpan = TimeSpan.FromDays(30); // Duración de la cookie de sesión.
-                options.SlidingExpiration = true; // La cookie se renueva si el usuario está activo.
+                options.ExpireTimeSpan = TimeSpan.FromDays(30); // Session cookie duration.
+                options.SlidingExpiration = true; // The cookie is renewed if the user is active.
             });
             #endregion
 
             #region Services
-            // Registra los servicios creados en esta capa para que puedan ser inyectados en otras partes de la aplicación.
-            // Se usa AddTransient porque los servicios de Identity (UserManager, SignInManager) ya están registrados con ese ciclo de vida.
+            // Registers the services created in this layer so they can be injected into other parts of the application.
+            // AddTransient is used because Identity services (UserManager, SignInManager) are already registered with this lifecycle.
             services.AddTransient<IAccountService, AccountService>();
             #endregion
         }

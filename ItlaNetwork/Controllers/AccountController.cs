@@ -1,23 +1,27 @@
-﻿using ItlaNetwork.Core.Application.Interfaces.Services;
+﻿using AutoMapper;
+using ItlaNetwork.Core.Application.DTOs.Account;
+using ItlaNetwork.Core.Application.Interfaces.Services;
 using ItlaNetwork.Core.Application.ViewModels.Account;
+using ItlaNetwork.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace WebApp.Controllers
+namespace ItlaNetwork.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
+        private readonly IMapper _mapper;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(IAccountService accountService, IMapper mapper)
         {
             _accountService = accountService;
+            _mapper = mapper;
         }
 
-        // Muestra la vista de Login
         public IActionResult Login()
         {
-            // Si el usuario ya está autenticado, lo redirige al Home.
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
@@ -25,7 +29,6 @@ namespace WebApp.Controllers
             return View(new LoginViewModel());
         }
 
-        // Procesa la petición de Login
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel vm)
         {
@@ -34,66 +37,51 @@ namespace WebApp.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
+            // Si la validación básica falla (campos vacíos), devuelve la vista.
+            // Los errores se mostrarán automáticamente junto a cada campo.
             if (!ModelState.IsValid)
             {
                 return View(vm);
             }
 
-            var response = await _accountService.AuthenticateAsync(vm);
+            AuthenticationRequest request = _mapper.Map<AuthenticationRequest>(vm);
+            AuthenticationResponse response = await _accountService.AuthenticateAsync(request);
+
             if (response.HasError)
             {
-                vm.HasError = response.HasError;
-                vm.Error = response.Error;
+                // Si el error viene del servicio (credenciales, cuenta no activa),
+                // lo añadimos al ModelState para que el ValidationSummary lo muestre.
+                ModelState.AddModelError("LoginError", response.Error);
                 return View(vm);
             }
 
-            // Si el login es exitoso, redirige al Home.
-            // El servicio ya se encargó de crear la cookie de sesión.
+            HttpContext.Session.Set<AuthenticationResponse>("user", response);
+
             return RedirectToAction("Index", "Home");
         }
 
-        // Muestra la vista de Registro
-        public IActionResult Register()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            return View(new RegisterViewModel());
-        }
-
-        // Procesa la petición de Registro
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel vm)
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View(vm);
-            }
-
-            var response = await _accountService.RegisterBasicUserAsync(vm);
-            if (response.HasError)
-            {
-                vm.HasError = response.HasError;
-                vm.Error = response.Error;
-                return View(vm);
-            }
-
-            // Si el registro es exitoso, redirige al Login para que el usuario inicie sesión.
-            return RedirectToAction("Login");
-        }
-
-        // Procesa el Logout
         public async Task<IActionResult> Logout()
         {
             await _accountService.SignOutAsync();
+            HttpContext.Session.Remove("user");
             return RedirectToAction("Login");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login");
+            }
+
+            string result = await _accountService.ConfirmEmailAsync(userId, token);
+            return View("ConfirmEmail", result);
+        }
+
+        public IActionResult ConfirmAccountInfo()
+        {
+            return View();
+        }
     }
 }

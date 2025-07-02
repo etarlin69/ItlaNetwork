@@ -1,45 +1,60 @@
 ﻿using AutoMapper;
-using ItlaNetwork.Core.Application.Enums;
 using ItlaNetwork.Core.Application.Interfaces.Repositories;
 using ItlaNetwork.Core.Application.Interfaces.Services;
 using ItlaNetwork.Core.Application.ViewModels.Post;
+using ItlaNetwork.Core.Application.ViewModels.Comment;
 using ItlaNetwork.Core.Domain.Entities;
-using System;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ItlaNetwork.Core.Application.Services
 {
     public class PostService : IPostService
     {
-        private readonly IGenericRepository<Post> _postRepository;
-        private readonly IReactionService _reactionService;
+        private readonly IPostRepository _postRepository;
+        private readonly ICommentRepository _commentRepository;
+        private readonly IReactionRepository _reactionRepository;
+        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        // SE ELIMINÓ IHttpContextAccessor DEL CONSTRUCTOR Y DE LA CLASE
-        public PostService(IGenericRepository<Post> postRepository, IReactionService reactionService, IMapper mapper)
+        public PostService(
+            IPostRepository postRepository,
+            ICommentRepository commentRepository,
+            IReactionRepository reactionRepository,
+            IAccountService accountService,
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor)
         {
             _postRepository = postRepository;
-            _reactionService = reactionService;
+            _commentRepository = commentRepository;
+            _reactionRepository = reactionRepository;
+            _accountService = accountService;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<SavePostViewModel> Add(SavePostViewModel vm, string userId)
+        public async Task<SavePostViewModel> Add(SavePostViewModel vm)
         {
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(currentUserId))
+            {
+                return null;
+            }
+
             var post = _mapper.Map<Post>(vm);
-            post.UserId = userId;
-            post.CreatedAt = DateTime.Now;
+            post.UserId = currentUserId;
+
             post = await _postRepository.AddAsync(post);
             return _mapper.Map<SavePostViewModel>(post);
         }
 
-        public async Task Update(SavePostViewModel vm, int id)
+        public async Task Update(SavePostViewModel vm)
         {
-            // La lógica de update podría necesitar el userId para validaciones de permiso en el futuro
-            var post = await _postRepository.GetByIdAsync(id);
-            post.Content = vm.Content;
-            post.ImageUrl = vm.ImageUrl;
+            var post = _mapper.Map<Post>(vm);
             await _postRepository.UpdateAsync(post);
         }
 
@@ -55,23 +70,59 @@ namespace ItlaNetwork.Core.Application.Services
             return _mapper.Map<SavePostViewModel>(post);
         }
 
-        // MÉTODO CORREGIDO: ahora usa el userId del parámetro
-        public async Task<List<PostViewModel>> GetAllViewModel(string userId)
+        public async Task<List<PostViewModel>> GetAllViewModel()
         {
-            var posts = await _postRepository.GetAllWithIncludeAsync(new List<string> { "User", "Comments.User" });
-            var postViewModels = _mapper.Map<List<PostViewModel>>(posts.OrderByDescending(p => p.CreatedAt));
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            var postList = await _postRepository.GetAllAsync();
 
-            foreach (var vm in postViewModels)
+            if (postList == null || !postList.Any())
             {
-                var reactions = await _reactionService.GetReactionsByPostIdAsync(vm.Id);
-                vm.LikeCount = reactions.Count(r => r.ReactionType == (int)ReactionType.Like);
-                vm.DislikeCount = reactions.Count(r => r.ReactionType == (int)ReactionType.Dislike);
-
-                var currentUserReaction = reactions.FirstOrDefault(r => r.UserId == userId);
-                vm.CurrentUserReaction = currentUserReaction != null ? (ReactionType)currentUserReaction.ReactionType : null;
+                return new List<PostViewModel>();
             }
 
-            return postViewModels;
+            var postViewModels = _mapper.Map<List<PostViewModel>>(postList);
+            var postIds = postList.Select(p => p.Id).ToList();
+
+            // Optimización: Obtener todos los datos relacionados en pocas llamadas
+            var allComments = await _commentRepository.GetAllByPostIdListAsync(postIds);
+            var allReactions = await _reactionRepository.GetAllByPostIdListAsync(postIds);
+            var allUserIds = postList.Select(p => p.UserId)
+                                     .Union(allComments.Select(c => c.UserId))
+                                     .Distinct().ToList();
+            var users = await _accountService.GetUsersByIdsAsync(allUserIds);
+
+            // "Unir" los datos en cada ViewModel
+            foreach (var postVm in postViewModels)
+            {
+                var author = users.FirstOrDefault(u => u.Id == postVm.UserId);
+                if (author != null)
+                {
+                    postVm.AuthorFullName = $"{author.FirstName} {author.LastName}";
+                    postVm.AuthorUserName = author.UserName;
+                    postVm.AuthorProfilePictureUrl = author.ProfilePictureUrl;
+                }
+
+                var postComments = allComments.Where(c => c.PostId == postVm.Id).ToList();
+                postVm.Comments = postComments.Select(comment =>
+                {
+                    var commentVm = _mapper.Map<CommentViewModel>(comment);
+                    var commentAuthor = users.FirstOrDefault(u => u.Id == comment.UserId);
+                    if (commentAuthor != null)
+                    {
+                        commentVm.AuthorFullName = $"{commentAuthor.FirstName} {commentAuthor.LastName}";
+                        commentVm.AuthorProfilePictureUrl = commentAuthor.ProfilePictureUrl;
+                    }
+                    return commentVm;
+                }).ToList();
+
+                var postReactions = allReactions.Where(r => r.PostId == postVm.Id).ToList();
+                postVm.LikeCount = postReactions.Count(r => r.ReactionType == Core.Domain.Enums.ReactionType.Like);
+                postVm.DislikeCount = postReactions.Count(r => r.ReactionType == Core.Domain.Enums.ReactionType.Dislike);
+                var currentUserReaction = postReactions.FirstOrDefault(r => r.UserId == currentUserId);
+                postVm.CurrentUserReaction = currentUserReaction?.ReactionType;
+            }
+
+            return postViewModels.OrderByDescending(p => p.CreatedAt).ToList();
         }
     }
 }

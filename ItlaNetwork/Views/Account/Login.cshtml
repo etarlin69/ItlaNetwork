@@ -1,4 +1,4 @@
-﻿@model ItlaNetwork.Core.Application.ViewModels.Account.LoginViewModel
+﻿@model LoginViewModel
 @{
     Layout = null;
     ViewData["Title"] = "Iniciar Sesión";
@@ -18,24 +18,22 @@
 
     <div class="login-card">
         <img src="~/images/logo-itlanetwork.png" alt="Logo ItlaNetwork" class="account-logo" />
-        <div class="text-center mb-5">
-            <h2 class="text-uppercase">Iniciar Sesión</h2>
+        <div class="text-center mb-4">
+            <h2 class="text-uppercase">Bienvenido de Nuevo</h2>
         </div>
 
-        @if (Model.HasError)
-        {
-            <div class="alert alert-danger bg-danger text-white border-0" role="alert">
-                @Model.Error
-            </div>
-        }
+        @* --- BLOQUE CORREGIDO Y SIMPLIFICADO --- *@
+        @* Este ValidationSummary mostrará TODOS los errores, tanto los de campo
+           (ej. "Debe colocar una contraseña") como los de lógica 
+           (ej. "Credenciales incorrectas"). *@
+        <div asp-validation-summary="All" class="alert alert-danger bg-danger text-white border-0" role="alert"></div>
 
-        <form asp-controller="Account" asp-action="Login" method="post">
-
+        <form asp-controller="Account" asp-action="Login" method="post" class="p-2">
             <div class="input-group-icon mb-4">
                 <i class="fa-solid fa-user input-icon"></i>
-                <input asp-for="UserName" type="text" class="form-control" placeholder=" " />
-                <label asp-for="UserName">Nombre de Usuario</label>
-                <span asp-validation-for="UserName" class="text-danger"></span>
+                <input asp-for="UserNameOrEmail" type="text" class="form-control" placeholder=" " />
+                <label asp-for="UserNameOrEmail">Usuario o Correo</label>
+                <span asp-validation-for="UserNameOrEmail" class="text-danger"></span>
             </div>
 
             <div class="input-group-icon mb-4">
@@ -46,7 +44,7 @@
             </div>
 
             <div class="d-grid mt-5">
-                <button class="btn btn-login" type="submit">Login</button>
+                <button class="btn btn-login" type="submit">Iniciar Sesión</button>
             </div>
         </form>
 
@@ -57,5 +55,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </body>
 </html>

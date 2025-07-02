@@ -1,20 +1,19 @@
 ﻿using ItlaNetwork.Core.Domain.Common;
 using ItlaNetwork.Core.Domain.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
-using System.Reflection; // Necesario para Assembly.GetExecutingAssembly()
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ItlaNetwork.Infrastructure.Persistence.Contexts
 {
-    public class ApplicationDbContext : IdentityDbContext<User>
+    // This DbContext now only handles business entities and inherits from the base DbContext.
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        // Agrega un DbSet para cada una de tus entidades
+        // DbSets for your business entities remain here.
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
@@ -33,11 +32,9 @@ namespace ItlaNetwork.Infrastructure.Persistence.Contexts
                 {
                     case EntityState.Added:
                         entry.Entity.CreatedAt = DateTime.Now;
-                        // entry.Entity.CreatedBy = "DefaultUser"; // Esto se poblará con el usuario autenticado
                         break;
                     case EntityState.Modified:
                         entry.Entity.ModifiedAt = DateTime.Now;
-                        // entry.Entity.ModifiedBy = "DefaultUser"; // Esto se poblará con el usuario autenticado
                         break;
                 }
             }
@@ -46,12 +43,10 @@ namespace ItlaNetwork.Infrastructure.Persistence.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Es MUY importante llamar al método base para que la configuración de Identity funcione.
             base.OnModelCreating(modelBuilder);
 
-            // Esta única línea escaneará todo el proyecto de persistencia,
-            // encontrará todas las clases que implementan IEntityTypeConfiguration
-            // y aplicará sus configuraciones automáticamente.
+            // This line will scan the entire Persistence project for IEntityTypeConfiguration classes
+            // and apply their configurations automatically.
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

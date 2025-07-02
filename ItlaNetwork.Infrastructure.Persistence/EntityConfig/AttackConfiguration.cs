@@ -11,15 +11,6 @@ namespace ItlaNetwork.Infrastructure.Persistence.Configurations
             builder.ToTable("Attacks");
             builder.HasKey(a => a.Id);
 
-            builder.HasOne(a => a.Game)
-                .WithMany(g => g.Attacks)
-                .HasForeignKey(a => a.GameId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(a => a.Attacker)
-                .WithMany()
-                .HasForeignKey(a => a.AttackerId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

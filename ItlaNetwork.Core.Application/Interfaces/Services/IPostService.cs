@@ -1,17 +1,23 @@
 ﻿using ItlaNetwork.Core.Application.ViewModels.Post;
 using ItlaNetwork.Core.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace ItlaNetwork.Core.Application.Interfaces.Services
 {
+    /// <summary>
+    /// Interfaz para el servicio de publicaciones.
+    /// Hereda las operaciones CRUD básicas de IGenericService.
+    /// </summary>
     public interface IPostService : IGenericService<SavePostViewModel, PostViewModel, Post>
     {
-        // El método 'Add' ya estaba correcto, recibiendo el userId.
-        Task<SavePostViewModel> Add(SavePostViewModel vm, string userId);
+        // Esta interfaz hereda correctamente los siguientes métodos de IGenericService:
+        // - Task<SavePostViewModel> Add(SavePostViewModel vm)
+        // - Task Update(SavePostViewModel vm)
+        // - Task Delete(int id)
+        // - Task<SavePostViewModel> GetByIdSaveViewModel(int id)
+        // - Task<List<PostViewModel>> GetAllViewModel()
 
-        // El método 'GetAllViewModel' también debe recibir el userId para poder
-        // calcular las reacciones del usuario actual.
-        Task<List<PostViewModel>> GetAllViewModel(string userId);
+        // Puedes añadir aquí cualquier método que sea específico y exclusivo para los Posts
+        // y que no esté definido en la interfaz genérica.
+        // Por ahora, puede permanecer vacía.
     }
 }

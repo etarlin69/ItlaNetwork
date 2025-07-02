@@ -12,6 +12,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Localization" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ItlaNetwork.Core.Application\ItlaNetwork.Core.Application.csproj" />
+    <ProjectReference Include="..\ItlaNetwork.Infrastructure.Identity\ItlaNetwork.Infrastructure.Identity.csproj" />
     <ProjectReference Include="..\ItlaNetwork.Infrastructure.Persistence\ItlaNetwork.Infrastructure.Persistence.csproj" />
     <ProjectReference Include="..\ItlaNetwork.Infrastructure.Shared\ItlaNetwork.Infrastructure.Shared.csproj" />
   </ItemGroup>

@@ -11,10 +11,6 @@ namespace ItlaNetwork.Infrastructure.Persistence.Configurations
             builder.ToTable("ShipPositions");
             builder.HasKey(sp => sp.Id);
 
-            builder.HasOne(sp => sp.Ship)
-                .WithMany(s => s.Positions)
-                .HasForeignKey(sp => sp.ShipId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -1,26 +1,15 @@
 ﻿using ItlaNetwork.Core.Domain.Common;
-using System.Collections.Generic;
 
 namespace ItlaNetwork.Core.Domain.Entities
 {
+    // Esta es la versión purista y desacoplada de la entidad Post.
     public class Post : AuditableBaseEntity
     {
         public string Content { get; set; }
         public string? ImageUrl { get; set; }
         public string? VideoUrl { get; set; }
 
-        // Clave foránea que lo conecta con el usuario
+        // Se mantiene la clave foránea, pero se eliminan las propiedades de navegación.
         public string UserId { get; set; }
-
-        // Propiedades de navegación
-        public User User { get; set; }
-        public ICollection<Comment> Comments { get; set; }
-        public ICollection<Reaction> Reactions { get; set; }
-
-        public Post()
-        {
-            Comments = new HashSet<Comment>();
-            Reactions = new HashSet<Reaction>();
-        }
     }
 }

@@ -1,0 +1,32 @@
+﻿@model string
+@{
+    Layout = null;
+    ViewData["Title"] = "Confirmación de Cuenta";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ItlaNetwork</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/account-styles.css" asp-append-version="true" />
+</head>
+<body class="account-body">
+    <div class="login-card">
+        <img src="~/images/logo-itlanetwork.png" alt="Logo ItlaNetwork" class="account-logo" />
+        <div class="text-center mb-4">
+            <h2 class="text-uppercase">Resultado de Activación</h2>
+        </div>
+
+        <div class="alert alert-info bg-info text-white border-0 text-center" role="alert">
+            @Model
+        </div>
+
+        <div class="d-grid mt-4">
+            <a asp-controller="Account" asp-action="Login" class="btn btn-login">Volver a Iniciar Sesión</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -2,7 +2,8 @@
 {
     public class AuthenticationRequest
     {
-        public string Email { get; set; }
+        // FIX: Changed from 'Email' to align with the LoginViewModel.
+        public string UserNameOrEmail { get; set; }
         public string Password { get; set; }
     }
 }

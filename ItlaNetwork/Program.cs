@@ -1,109 +1,75 @@
 using ItlaNetwork.Core.Application;
-using ItlaNetwork.Core.Domain.Entities;
-using ItlaNetwork.Core.Domain.Settings;
 using ItlaNetwork.Infrastructure.Persistence;
-using ItlaNetwork.Infrastructure.Persistence.Contexts;
 using ItlaNetwork.Infrastructure.Shared;
+using ItlaNetwork.Infrastructure.Identity;
+using ItlaNetwork.Infrastructure.Identity.Models;
+using ItlaNetwork.Infrastructure.Identity.Seeds;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Localization;
-using System.Globalization;
-using WebApp.Middlewares;
+using Microsoft.Extensions.Logging;
+using System;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 // Add services to the container.
-builder.Services.AddPersistenceInfrastructure(builder.Configuration);
-builder.Services.AddApplicationLayer();
-builder.Services.AddSharedInfrastructure(builder.Configuration);
+builder.Services.AddControllersWithViews();
 
-#region Identity
-builder.Services.AddIdentity<User, IdentityRole>(options =>
-{
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 6;
-})
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
-#endregion
+// Services required for session and user context.
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddDistributedMemoryCache();
 
-builder.Services.ConfigureApplicationCookie(options =>
+// Session configuration
+builder.Services.AddSession(options =>
 {
-    options.LoginPath = "/Account/Login";
-    options.LogoutPath = "/Account/Logout";
-    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.IdleTimeout = TimeSpan.FromHours(1);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
-builder.Services.AddSession();
-
-// --- SECCIÓN MODIFICADA: Integramos la localización con MVC ---
-builder.Services.AddControllersWithViews()
-    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
-    .AddDataAnnotationsLocalization();
-
-// Hacemos que la ruta de los recursos sea "Resources"
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-// --- FIN DE LA SECCIÓN MODIFICADA ---
-
-#if DEBUG
-var mvcBuilder = builder.Services.AddControllersWithViews(); // Se mantiene para AddRazorRuntimeCompilation si lo usas
-mvcBuilder.AddRazorRuntimeCompilation();
-#endif
-
+// Register all layers of the architecture
+builder.Services.AddPersistenceInfrastructure(configuration);
+builder.Services.AddApplicationLayer();
+builder.Services.AddSharedInfrastructure(configuration);
+builder.Services.AddIdentityInfrastructure(configuration);
 
 var app = builder.Build();
 
-// Seeding...
+// Seeding logic
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
-        var userManager = services.GetRequiredService<UserManager<User>>();
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
-        await ItlaNetwork.Infrastructure.Persistence.Seeds.DefaultRoles.SeedAsync(userManager, roleManager);
-        await ItlaNetwork.Infrastructure.Persistence.Seeds.DefaultAdminUser.SeedAsync(userManager, roleManager);
+        await IdentityDataSeeder.SeedUsersAndRolesAsync(userManager, roleManager);
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Ocurrió un error durante el seeding de la base de datos.");
+        logger.LogError(ex, "An error occurred during the seeding of the database.");
     }
 }
 
-
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-else
+if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseErrorHandlerMiddleware();
     app.UseHsts();
 }
-
-// --- SECCIÓN MODIFICADA: Usamos una cultura más genérica ---
-var supportedCultures = new[] { new CultureInfo("es") };
-app.UseRequestLocalization(new RequestLocalizationOptions
-{
-    DefaultRequestCulture = new RequestCulture("es"),
-    SupportedCultures = supportedCultures,
-    SupportedUICultures = supportedCultures
-});
-// --- FIN DE LA SECCIÓN MODIFICADA ---
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseSession();
+
+// MIDDLEWARE: El orden es crucial para el funcionamiento correcto.
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession(); // La sesión se configura después de la autenticación
 
 app.MapControllerRoute(
     name: "default",

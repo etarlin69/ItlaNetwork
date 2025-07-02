@@ -1,13 +1,12 @@
 ﻿using ItlaNetwork.Core.Application.Interfaces.Services;
 using ItlaNetwork.Core.Application.ViewModels.Friendship;
-using ItlaNetwork.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace ItlaNetwork.Controllers
 {
-    [Authorize]
+    [Authorize] // Ensures only authenticated users can access this controller
     public class FriendRequestController : Controller
     {
         private readonly IFriendshipService _friendshipService;
@@ -17,63 +16,37 @@ namespace ItlaNetwork.Controllers
             _friendshipService = friendshipService;
         }
 
+        // Displays both received and sent friend requests
         public async Task<IActionResult> Index()
         {
-            var userId = User.GetId();
             var vm = new FriendRequestPageViewModel
             {
-                ReceivedRequests = await _friendshipService.GetAllFriendRequests(userId),
-                SentRequests = await _friendshipService.GetSentFriendRequests(userId)
-            };
-            return View(vm);
-        }
-
-        public async Task<IActionResult> AddFriend(string? userName)
-        {
-            var userId = User.GetId();
-            var vm = new AddFriendViewModel
-            {
-                Users = await _friendshipService.GetAllUsers(userId, userName),
-                UserName = userName
+                ReceivedRequests = await _friendshipService.GetPendingFriendRequests(),
+                SentRequests = await _friendshipService.GetSentFriendRequests()
             };
             return View(vm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddFriend(AddFriendViewModel vm)
+        public async Task<IActionResult> Accept(int id)
         {
-            if (string.IsNullOrEmpty(vm.SelectedUserId))
-            {
-                TempData["error"] = "Debe seleccionar un usuario para enviar la solicitud.";
-                return RedirectToAction("AddFriend", new { userName = vm.UserName });
-            }
-
-            var senderUserId = User.GetId();
-            await _friendshipService.AddFriendByIdAsync(senderUserId, vm.SelectedUserId);
-
+            await _friendshipService.AcceptFriendRequestAsync(id);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public async Task<IActionResult> Accept(string requestingUserId)
+        public async Task<IActionResult> Reject(int id)
         {
-            var receiverUserId = User.GetId();
-            await _friendshipService.AcceptFriendRequestAsync(requestingUserId, receiverUserId);
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Reject(string requestingUserId)
-        {
-            var receiverUserId = User.GetId();
-            await _friendshipService.RejectFriendRequestAsync(requestingUserId, receiverUserId);
+            await _friendshipService.RejectFriendRequestAsync(id);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            await _friendshipService.DeleteFriendRequestAsync(id);
+            // This action is for deleting a request that the current user has sent.
+            // We can reuse the RejectFriendRequestAsync logic as it simply deletes the request.
+            await _friendshipService.RejectFriendRequestAsync(id);
             return RedirectToAction("Index");
         }
     }

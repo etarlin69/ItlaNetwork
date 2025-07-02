@@ -3,17 +3,16 @@ using System.Threading.Tasks;
 
 namespace ItlaNetwork.Core.Application.Interfaces.Services
 {
+    // A generic interface for basic CRUD operations.
     public interface IGenericService<SaveViewModel, ViewModel, Entity>
         where SaveViewModel : class
         where ViewModel : class
         where Entity : class
     {
-        // El método Add ya fue eliminado correctamente.
-        Task Update(SaveViewModel vm, int id);
+        Task<SaveViewModel> Add(SaveViewModel vm);
+        Task Update(SaveViewModel vm);
         Task Delete(int id);
         Task<SaveViewModel> GetByIdSaveViewModel(int id);
-
-        // Se ELIMINA el método GetAllViewModel de la interfaz genérica.
-        // Task<List<ViewModel>> GetAllViewModel(); 
+        Task<List<ViewModel>> GetAllViewModel();
     }
 }

@@ -4,31 +4,37 @@
     ViewData["Title"] = "Home";
 }
 
-<div class="main-container">
-    <div class="row">
-        <div class="col-12">
+<div class="row">
+    <div class="col-12">
+        @* --- Formulario de creación de post --- *@
+        <partial name="_CreatePostForm" model="Model.NewPost" />
 
-            <partial name="_CreatePostForm" model="Model.NewPost" />
+        @* ————— Aquí mostramos todos los errores generales de ModelState ————— *@
+        @Html.ValidationSummary(
+        excludePropertyErrors: true,
+                message: null,
+                htmlAttributes: new { @class = "alert alert-danger mt-3" }
+                )
 
-            <div class="feed-container">
-                @if (Model.Posts == null || !Model.Posts.Any())
+        @* ————— Inicio del feed de posts ————— *@
+        <div class="feed-container mt-4">
+            @if (Model.Posts == null || !Model.Posts.Any())
+            {
+                <div class="text-center text-white-50 mt-5">
+                    <h4>No hay publicaciones para mostrar.</h4>
+                    <p>¡Sé el primero en publicar algo!</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var post in Model.Posts)
                 {
-                    <div class="text-center text-white-50 mt-5">
-                        <h4>No hay publicaciones para mostrar.</h4>
-                        <p>¡Sé el primero en publicar algo!</p>
+                    <div class="glass-card mb-3">
+                        <partial name="_PostCard" model="post" />
                     </div>
                 }
-                else
-                {
-                    @foreach (var post in Model.Posts)
-                    {
-                        <div class="glass-card">
-                            <partial name="_PostCard" model="post" />
-                        </div>
-                    }
-                }
-            </div>
-
+            }
         </div>
+        @* ————— Fin del feed de posts ————— *@
     </div>
 </div>

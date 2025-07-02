@@ -1,11 +1,12 @@
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\bin\Debug\net9.0\ItlaNetwork.Core.Domain.deps.json
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\bin\Debug\net9.0\ItlaNetwork.Core.Domain.dll
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\bin\Debug\net9.0\ItlaNetwork.Core.Domain.pdb
 C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\obj\Debug\net9.0\ItlaNetwork.Core.Domain.csproj.AssemblyReference.cache
 C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\obj\Debug\net9.0\ItlaNetwork.Core.Domain.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\obj\Debug\net9.0\ItlaNetwork.Core.Domain.AssemblyInfoInputs.cache
 C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\obj\Debug\net9.0\ItlaNetwork.Core.Domain.AssemblyInfo.cs
 C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\obj\Debug\net9.0\ItlaNetwork.Core.Domain.csproj.CoreCompileInputs.cache
-C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\bin\Debug\net9.0\ItlaNetwork.Core.Domain.deps.json
-C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\bin\Debug\net9.0\ItlaNetwork.Core.Domain.dll
-C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\bin\Debug\net9.0\ItlaNetwork.Core.Domain.pdb
+C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\obj\Debug\net9.0\ItlaNetwork.Core.Domain.sourcelink.json
 C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\obj\Debug\net9.0\ItlaNetwork.Core.Domain.dll
 C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\obj\Debug\net9.0\refint\ItlaNetwork.Core.Domain.dll
 C:\Users\DELLG15\source\repos\ItlaNetwork\ItlaNetwork.Core.Domain\obj\Debug\net9.0\ItlaNetwork.Core.Domain.pdb

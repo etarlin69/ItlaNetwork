@@ -1,12 +1,13 @@
 ﻿using ItlaNetwork.Core.Application.ViewModels.Reaction;
-using ItlaNetwork.Core.Domain.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ItlaNetwork.Core.Application.Interfaces.Services
 {
     public interface IReactionService
     {
-        Task ToggleReactionAsync(SaveReactionViewModel vm, string userId);
-        Task<List<Reaction>> GetReactionsByPostIdAsync(int postId);
+        // The method now returns the updated counts and user reaction status.
+        Task<ReactionCountViewModel> ToggleReactionAsync(SaveReactionViewModel vm);
+        Task<List<ReactionViewModel>> GetReactionsByPostIdAsync(int postId);
     }
 }

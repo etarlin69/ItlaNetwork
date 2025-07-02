@@ -1,10 +1,10 @@
+using ItlaNetwork.Core.Application.DTOs.Account; // Necesario para AuthenticationResponse
 using ItlaNetwork.Core.Application.Interfaces.Services;
 using ItlaNetwork.Core.Application.ViewModels.Home;
-using ItlaNetwork.Extensions; // El controlador SÍ PUEDE usar esta extensión
-using ItlaNetwork.Models;
+using ItlaNetwork.Extensions; // Necesario para la extensión de sesión
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http; // Necesario para HttpContext.Session
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace ItlaNetwork.Controllers
@@ -13,36 +13,30 @@ namespace ItlaNetwork.Controllers
     public class HomeController : Controller
     {
         private readonly IPostService _postService;
-        private readonly ILogger<HomeController> _logger;
 
-        // Ya no necesita IHttpContextAccessor aquí porque usamos la propiedad User
-        public HomeController(IPostService postService, ILogger<HomeController> logger)
+        public HomeController(IPostService postService)
         {
             _postService = postService;
-            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
-            // 1. El controlador obtiene el ID del usuario de la sesión.
-            var userId = User.GetId();
+            // --- LÓGICA ACTUALIZADA ---
+            // 1. Obtener el usuario de la sesión.
+            var user = HttpContext.Session.Get<AuthenticationResponse>("user");
 
-            // 2. Llama al servicio y le PASA el ID del usuario como parámetro.
-            var posts = await _postService.GetAllViewModel(userId);
+            // 2. Obtener los posts.
+            var posts = await _postService.GetAllViewModel();
 
+            // 3. Crear el HomeViewModel y pasarle los datos necesarios.
             var homeVm = new HomeViewModel
             {
                 Posts = posts,
-                NewPost = new()
+                NewPost = new(),
+                CurrentUserName = user?.UserName ?? "Usuario" // Pasamos el nombre de usuario
             };
 
             return View(homeVm);
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

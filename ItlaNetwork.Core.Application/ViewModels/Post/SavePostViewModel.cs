@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http; // <--- Se añade este using
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace ItlaNetwork.Core.Application.ViewModels.Post
@@ -8,15 +8,17 @@ namespace ItlaNetwork.Core.Application.ViewModels.Post
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Debe colocar el contenido de la publicación")]
-        [DataType(DataType.MultilineText)]
         public string Content { get; set; }
 
         public string? ImageUrl { get; set; }
 
-        // Se añade la propiedad para recibir el archivo del formulario
         [DataType(DataType.Upload)]
         public IFormFile? ImageFile { get; set; }
 
-        // Las propiedades UserId y CreatedAt se manejarán en el backend, no aquí.
+        // --- CORRECCIÓN ---
+        // Se vuelve a añadir la propiedad UserId, pero SIN el atributo [Required].
+        // Esto permite que el modelo sea válido al crear un post (donde el UserId viene del servidor),
+        // y que esté disponible para las comprobaciones de autorización.
+        public string UserId { get; set; }
     }
 }

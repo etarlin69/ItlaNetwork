@@ -9,18 +9,22 @@ namespace ItlaNetwork.Core.Application
     {
         public static void AddApplicationLayer(this IServiceCollection services)
         {
+            // Registers AutoMapper and finds all profiles in this assembly.
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-            #region Services
-            // Ya teníamos registrado el servicio de cuentas.
-            services.AddTransient<IAccountService, AccountService>();
+            #region Application Services
+            // This file is responsible for registering services that are implemented
+            // within the Core.Application layer itself.
 
-            // --- LÍNEA QUE FALTA ---
-            // Aquí registramos el servicio de publicaciones.
+            // The line for IAccountService has been removed because its implementation,
+            // AccountService, now resides in the Infrastructure.Identity layer.
+            // That registration is correctly handled in the ServiceRegistration of that project.
+
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IReactionService, ReactionService>();
             services.AddTransient<IFriendshipService, FriendshipService>();
+            // Add other application-layer services here.
             #endregion
         }
     }
