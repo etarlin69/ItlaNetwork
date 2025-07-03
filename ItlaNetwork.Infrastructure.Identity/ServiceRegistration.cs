@@ -1,4 +1,6 @@
-﻿using ItlaNetwork.Core.Application.Interfaces.Services;
+﻿using System;
+using System.Reflection;
+using ItlaNetwork.Core.Application.Interfaces.Services;
 using ItlaNetwork.Infrastructure.Identity.Contexts;
 using ItlaNetwork.Infrastructure.Identity.Models;
 using ItlaNetwork.Infrastructure.Identity.Services;
@@ -6,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace ItlaNetwork.Infrastructure.Identity
 {
@@ -68,6 +69,8 @@ namespace ItlaNetwork.Infrastructure.Identity
                 options.SlidingExpiration = true; // The cookie is renewed if the user is active.
             });
             #endregion
+
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             #region Services
             // Registers the services created in this layer so they can be injected into other parts of the application.

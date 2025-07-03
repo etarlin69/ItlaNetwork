@@ -1,5 +1,7 @@
 ﻿using ItlaNetwork.Core.Application.ViewModels.Post;
 using ItlaNetwork.Core.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ItlaNetwork.Core.Application.Interfaces.Services
 {
@@ -16,8 +18,12 @@ namespace ItlaNetwork.Core.Application.Interfaces.Services
         // - Task<SavePostViewModel> GetByIdSaveViewModel(int id)
         // - Task<List<PostViewModel>> GetAllViewModel()
 
-        // Puedes añadir aquí cualquier método que sea específico y exclusivo para los Posts
-        // y que no esté definido en la interfaz genérica.
-        // Por ahora, puede permanecer vacía.
+        /// <summary>
+        /// Devuelve el UserId del autor de un post específico.
+        /// Usado para comprobaciones de autorización.
+        /// </summary>
+        /// <param name="id">Id del post</param>
+        /// <returns>UserId del autor o null si no existe</returns>
+        Task<string> GetPostOwnerIdById(int id);
     }
 }

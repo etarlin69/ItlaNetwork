@@ -14,29 +14,48 @@ namespace ItlaNetwork.Core.Application.Services
     public class CommentService : ICommentService
     {
         private readonly ICommentRepository _commentRepository;
-        private readonly IAccountService _accountService; // <-- Add dependency
+        private readonly IAccountService _accountService; // To get author data
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CommentService(ICommentRepository commentRepository, IAccountService accountService, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _commentRepository = commentRepository;
-            _accountService = accountService; // <-- Initialize dependency
+            _accountService = accountService;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<SaveCommentViewModel> Add(SaveCommentViewModel vm)
+        // This 'Add' method overrides the generic one to return a complete ViewModel for AJAX updates.
+        public new async Task<CommentViewModel> Add(SaveCommentViewModel vm)
         {
             var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(currentUserId))
-            {
-                return null; // Or throw an exception for unauthorized action
-            }
+            if (string.IsNullOrEmpty(currentUserId)) return null;
 
             var comment = _mapper.Map<Comment>(vm);
             comment.UserId = currentUserId;
 
+            comment = await _commentRepository.AddAsync(comment);
+
+            // Stitching logic: After saving, get the author's data to return a complete ViewModel.
+            var author = await _accountService.GetUserByIdAsync(currentUserId);
+            var commentViewModel = _mapper.Map<CommentViewModel>(comment);
+
+            if (author != null)
+            {
+                commentViewModel.AuthorFullName = $"{author.FirstName} {author.LastName}";
+                commentViewModel.AuthorProfilePictureUrl = author.ProfilePictureUrl;
+            }
+
+            return commentViewModel;
+        }
+
+        // Explicit implementation of the generic Add method.
+        async Task<SaveCommentViewModel> IGenericService<SaveCommentViewModel, CommentViewModel, Comment>.Add(SaveCommentViewModel vm)
+        {
+            var comment = _mapper.Map<Comment>(vm);
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            comment.UserId = currentUserId;
             comment = await _commentRepository.AddAsync(comment);
             return _mapper.Map<SaveCommentViewModel>(comment);
         }
@@ -44,6 +63,8 @@ namespace ItlaNetwork.Core.Application.Services
         public async Task Update(SaveCommentViewModel vm)
         {
             var comment = _mapper.Map<Comment>(vm);
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            comment.UserId = currentUserId; // Ensure UserId is preserved on update
             await _commentRepository.UpdateAsync(comment);
         }
 
@@ -59,7 +80,6 @@ namespace ItlaNetwork.Core.Application.Services
             return _mapper.Map<SaveCommentViewModel>(comment);
         }
 
-        // --- ADDED: Implementation for the missing interface member ---
         public async Task<List<CommentViewModel>> GetAllViewModel()
         {
             var comments = await _commentRepository.GetAllAsync();
@@ -67,7 +87,6 @@ namespace ItlaNetwork.Core.Application.Services
 
             var commentViewModels = _mapper.Map<List<CommentViewModel>>(comments);
 
-            // Stitching logic for author data
             var userIds = comments.Select(c => c.UserId).Distinct().ToList();
             var users = await _accountService.GetUsersByIdsAsync(userIds);
 

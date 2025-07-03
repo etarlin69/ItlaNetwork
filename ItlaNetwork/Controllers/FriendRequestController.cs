@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ItlaNetwork.Controllers
 {
-    [Authorize] // Ensures only authenticated users can access this controller
+    [Authorize]
     public class FriendRequestController : Controller
     {
         private readonly IFriendshipService _friendshipService;
@@ -16,7 +16,6 @@ namespace ItlaNetwork.Controllers
             _friendshipService = friendshipService;
         }
 
-        // Displays both received and sent friend requests
         public async Task<IActionResult> Index()
         {
             var vm = new FriendRequestPageViewModel
@@ -25,6 +24,31 @@ namespace ItlaNetwork.Controllers
                 SentRequests = await _friendshipService.GetSentFriendRequests()
             };
             return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddFriend(string userNameQuery)
+        {
+            var vm = new AddFriendViewModel
+            {
+                Users = await _friendshipService.GetPotentialFriends(userNameQuery),
+                UserName = userNameQuery
+            };
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddFriend(AddFriendViewModel vm)
+        {
+            if (string.IsNullOrEmpty(vm.SelectedUserId))
+            {
+                TempData["Error"] = "Debe seleccionar un usuario para enviar la solicitud.";
+                return RedirectToAction("AddFriend", new { userNameQuery = vm.UserName });
+            }
+
+            await _friendshipService.SendFriendRequestAsync(vm.SelectedUserId);
+            TempData["Success"] = "¡Solicitud de amistad enviada exitosamente!";
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -37,15 +61,6 @@ namespace ItlaNetwork.Controllers
         [HttpPost]
         public async Task<IActionResult> Reject(int id)
         {
-            await _friendshipService.RejectFriendRequestAsync(id);
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
-        {
-            // This action is for deleting a request that the current user has sent.
-            // We can reuse the RejectFriendRequestAsync logic as it simply deletes the request.
             await _friendshipService.RejectFriendRequestAsync(id);
             return RedirectToAction("Index");
         }

@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ItlaNetwork")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be765bca185d6505ffefedca828bc7bf381a21e6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8557e08085debe9a82cdb89f1b0d1879e5854438")]
 [assembly: System.Reflection.AssemblyProductAttribute("ItlaNetwork")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ItlaNetwork")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

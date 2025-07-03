@@ -8,6 +8,6 @@ namespace ItlaNetwork.Core.Application.Interfaces.Services
     {
         // The method now returns the updated counts and user reaction status.
         Task<ReactionCountViewModel> ToggleReactionAsync(SaveReactionViewModel vm);
-        Task<List<ReactionViewModel>> GetReactionsByPostIdAsync(int postId);
+        
     }
 }

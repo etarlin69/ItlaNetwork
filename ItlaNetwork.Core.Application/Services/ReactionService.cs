@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using ItlaNetwork.Core.Domain.Enums;
 using ItlaNetwork.Core.Application.Interfaces.Repositories;
 using ItlaNetwork.Core.Application.Interfaces.Services;
 using ItlaNetwork.Core.Application.ViewModels.Reaction;
 using ItlaNetwork.Core.Domain.Entities;
+using ItlaNetwork.Core.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace ItlaNetwork.Core.Application.Services
@@ -51,19 +50,12 @@ namespace ItlaNetwork.Core.Application.Services
                 await _reactionRepository.AddAsync(reaction);
             }
 
-            // After the operation, calculate and return the new state.
-            return await GetReactionCountsForPost(vm.PostId, currentUserId);
+            return await GetReactionCountsForPost(vm.PostId);
         }
 
-        public async Task<List<ReactionViewModel>> GetReactionsByPostIdAsync(int postId)
+        private async Task<ReactionCountViewModel> GetReactionCountsForPost(int postId)
         {
-            var reactions = await _reactionRepository.GetAllByPostIdAsync(postId);
-            return _mapper.Map<List<ReactionViewModel>>(reactions);
-        }
-
-        // Private helper method to calculate counts efficiently.
-        private async Task<ReactionCountViewModel> GetReactionCountsForPost(int postId, string currentUserId)
-        {
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
             var reactions = await _reactionRepository.GetAllByPostIdAsync(postId);
             var currentUserReaction = reactions.FirstOrDefault(r => r.UserId == currentUserId);
 

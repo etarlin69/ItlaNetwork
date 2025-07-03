@@ -1,64 +1,105 @@
 ﻿@using ItlaNetwork.Core.Application.ViewModels.Friendship
 @model AddFriendViewModel
+
 @{
     ViewData["Title"] = "Añadir Amigo";
 }
 
-<div class="container main-container">
-    <div class="row">
-        <div class="col-12 col-md-10 col-lg-8 mx-auto">
-            <div class="glass-card">
-                <h3 class="text-white mb-4">Añadir Amigo</h3>
+<div class="row">
+    <div class="col-12 col-md-10 col-lg-8 mx-auto">
+        <div class="glass-card">
+            <h3 class="text-white mb-4">Añadir Amigo</h3>
 
-                <form asp-controller="FriendRequest" asp-action="AddFriend" method="get" class="mb-4">
-                    <div class="input-group">
-                        <input type="text" name="userName" class="form-control" placeholder="Buscar por nombre de usuario..." value="@Model.UserName" />
-                        <button class="btn btn-outline-light" type="submit"><i class="fa fa-search"></i> Buscar</button>
-                    </div>
-                </form>
+            @* Mensajes de éxito o error *@
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["Error"]
+                </div>
+            }
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Success"]
+                </div>
+            }
 
-                <form asp-controller="FriendRequest" asp-action="AddFriend" method="post">
-                    @if (Model.Users == null || !Model.Users.Any())
-                    {
-                        <p class="text-center text-white-50">No se encontraron usuarios o ya eres amigo de todos.</p>
-                    }
-                    else
-                    {
-                        <ul class="list-group list-group-flush">
-                            @foreach (var user in Model.Users)
-                            {
-                                <li class="list-group-item bg-transparent user-list-item text-white">
-                                    <div class="profile-pic-container" style="width: 50px; height: 50px;">
-                                        @if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
-                                        {
-                                            <img src="@user.ProfilePictureUrl" alt="Foto de @user.UserName" class="profile-pic" />
-                                        }
-                                        else
-                                        {
-                                            <i class="fa-solid fa-user-astronaut profile-pic-default"></i>
-                                        }
-                                    </div>
-                                    <div class="user-info">
-                                        <div class="user-name">@user.FirstName @user.LastName</div>
-                                        <div class="user-details">@user.UserName</div>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="SelectedUserId" value="@user.UserId" id="user-@user.UserId" />
-                                        <label class="form-check-label" for="user-@user.UserId">
-                                            Seleccionar
-                                        </label>
-                                    </div>
-                                </li>
-                            }
-                        </ul>
-                    }
-                    <div class="d-flex justify-content-end gap-2 mt-4">
-                        <a asp-controller="FriendRequest" asp-action="Index" class="btn btn-secondary">Volver</a>
-                        <button type="submit" class="btn btn-gradient" disabled="@(Model.Users == null || !Model.Users.Any())">Enviar Solicitud</button>
-                    </div>
-                </form>
+            @* Formulario de búsqueda *@
+            <form asp-controller="Friend"
+                  asp-action="Add"
+                  method="get"
+                  class="mb-4">
+                <div class="input-group">
+                    <input type="text"
+                           name="userNameQuery"
+                           class="form-control"
+                           placeholder="Buscar por nombre de usuario..."
+                           value="@Model.UserName" />
+                    <button class="btn btn-outline-light" type="submit">
+                        <i class="fa fa-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
 
-            </div>
+            @* Formulario de envío de solicitud *@
+            <form asp-controller="Friend"
+                  asp-action="SendRequest"
+                  method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="UserName" />
+
+                @if (Model.Users == null || !Model.Users.Any())
+                {
+                    <p class="text-center text-white-50">
+                        No se encontraron usuarios o ya eres amigo de todos.
+                    </p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var user in Model.Users)
+                        {
+                            <li class="list-group-item bg-transparent user-list-item text-white d-flex align-items-center">
+                                <div class="profile-pic-container" style="width:50px; height:50px;">
+                                    @if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+                                    {
+                                        <img src="@user.ProfilePictureUrl"
+                                             alt="@user.UserName"
+                                             class="profile-pic rounded-circle" />
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-solid fa-user-astronaut profile-pic-default"></i>
+                                    }
+                                </div>
+                                <div class="ms-3">
+                                    <div class="user-name">@user.FirstName @user.LastName</div>
+                                    <div class="user-details text-white-50">@user.UserName</div>
+                                </div>
+                                <div class="form-check ms-auto">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           asp-for="SelectedUserId"
+                                           value="@user.Id"
+                                           id="user-@user.Id" />
+                                    <label class="form-check-label" for="user-@user.Id">
+                                        Seleccionar
+                                    </label>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a asp-controller="Friend" asp-action="Index" class="btn btn-secondary">Volver</a>
+                    <button type="submit"
+                            class="btn btn-gradient"
+                            disabled="@(Model.Users == null || !Model.Users.Any())">
+                        Enviar Solicitud
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

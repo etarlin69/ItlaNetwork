@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ItlaNetwork</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css)" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="~/css/account-styles.css" asp-append-version="true" />
 </head>
 <body class="account-body">
@@ -22,14 +22,10 @@
             <h2 class="text-uppercase">Crear una Cuenta</h2>
         </div>
 
-        @if (Model != null && Model.HasError)
-        {
-            <div class="alert alert-danger bg-danger text-white border-0" role="alert">
-                @Model.Error
-            </div>
-        }
+        @* Este ValidationSummary mostrará errores de lógica (ej. "usuario ya existe"). *@
+        <div asp-validation-summary="All" class="alert alert-danger bg-danger text-white border-0" role="alert"></div>
 
-        <form asp-controller="Account" asp-action="Register" method="post" class="p-2" enctype="multipart/form-data">
+        <form asp-controller="Account" asp-action="Register" method="post" class="p-2">
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <div class="input-group-icon">
@@ -63,7 +59,6 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
-            @* --- CAMPO AÑADIDO --- *@
             <div class="input-group-icon mb-4">
                 <i class="fa-solid fa-phone input-icon"></i>
                 <input asp-for="Phone" type="tel" class="form-control" placeholder=" " />
@@ -91,11 +86,13 @@
         </form>
 
         <div class="mt-4 text-center register-link">
-            <p class="mb-0 text-white-50">¿Ya tienes una cuenta? <a asp-action="Login">Inicia Sesión</a></p>
+            <p class="mb-0 text-white-50">¿Ya tienes una cuenta? <a asp-controller="Account" asp-action="Login">Inicia Sesión</a></p>
         </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </body>
 </html>

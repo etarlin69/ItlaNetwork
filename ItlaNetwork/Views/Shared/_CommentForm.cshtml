@@ -1,0 +1,29 @@
+﻿@using ItlaNetwork.Core.Application.ViewModels.Comment
+@model SaveCommentViewModel
+
+<form asp-controller="Comment"
+      asp-action="Save"
+      method="post"
+      class="mb-3">
+    @* Para comentarios sobre post *@
+    <input type="hidden" asp-for="PostId" />
+
+    @* Para replies si agregaste esa propiedad *@
+    @if (Model.ParentCommentId.HasValue)
+    {
+        <input type="hidden" asp-for="ParentCommentId" />
+    }
+
+    <div class="mb-2">
+        <textarea asp-for="Content"
+                  class="form-control"
+                  rows="2"
+                  placeholder="Escribe tu comentario...">
+        </textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-sm btn-gradient">
+        Comentar
+    </button>
+</form>

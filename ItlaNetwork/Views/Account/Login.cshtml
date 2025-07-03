@@ -22,11 +22,7 @@
             <h2 class="text-uppercase">Bienvenido de Nuevo</h2>
         </div>
 
-        @* --- BLOQUE CORREGIDO Y SIMPLIFICADO --- *@
-        @* Este ValidationSummary mostrará TODOS los errores, tanto los de campo
-           (ej. "Debe colocar una contraseña") como los de lógica 
-           (ej. "Credenciales incorrectas"). *@
-        <div asp-validation-summary="All" class="alert alert-danger bg-danger text-white border-0" role="alert"></div>
+        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
 
         <form asp-controller="Account" asp-action="Login" method="post" class="p-2">
             <div class="input-group-icon mb-4">

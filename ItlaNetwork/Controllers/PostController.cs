@@ -1,13 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using ItlaNetwork.Core.Application.Interfaces.Services;
+﻿using ItlaNetwork.Core.Application.Interfaces.Services;
 using ItlaNetwork.Core.Application.ViewModels.Home;
 using ItlaNetwork.Core.Application.ViewModels.Post;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.IO;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace ItlaNetwork.Controllers
 {
@@ -23,12 +23,10 @@ namespace ItlaNetwork.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        // POST: /Post/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SavePostViewModel vm)
         {
-            // Si la validación del modelo falla, volvemos a la vista Home con los errores
             if (!ModelState.IsValid)
             {
                 var homeVm = new HomeViewModel
@@ -39,105 +37,107 @@ namespace ItlaNetwork.Controllers
                 return View("~/Views/Home/Index.cshtml", homeVm);
             }
 
-            try
+            if (vm.ImageFile != null)
             {
-                // Si hay fichero de imagen, lo subimos y guardamos la URL en el VM
-                if (vm.ImageFile != null)
-                {
-                    vm.ImageUrl = UploadImage(vm.ImageFile);
-                }
-
-                // Agregamos el nuevo post
-                await _postService.Add(vm);
-
-                // En caso de éxito, redirigimos al listado
-                return RedirectToAction("Index", "Home");
+                vm.ImageUrl = UploadImage(vm.ImageFile);
             }
-            catch (Exception ex)
-            {
-                // Capturamos la excepción y la añadimos al ModelState
-                ModelState.AddModelError(string.Empty, ex.Message);
 
-                // Reenviamos a la vista Home con el VM para mostrar el error
-                var homeVm = new HomeViewModel
-                {
-                    Posts = await _postService.GetAllViewModel(),
-                    NewPost = vm
-                };
-                return View("~/Views/Home/Index.cshtml", homeVm);
-            }
+            await _postService.Add(vm);
+            return RedirectToAction("Index", "Home");
         }
 
-        // GET: /Post/Edit/{id}
-        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var vm = await _postService.GetByIdSaveViewModel(id);
-            if (vm == null)
-                return NotFound();
+            var postVm = await _postService.GetByIdSaveViewModel(id);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return View(vm);
+            // Verificación de autorización con base en el post recuperado
+            var postOwnerId = await _postService.GetPostOwnerIdById(id);
+            if (postOwnerId != currentUserId)
+            {
+                return Unauthorized();
+            }
+
+            return View("SavePost", postVm);
         }
 
-        // POST: /Post/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SavePostViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(vm);
-
-            try
             {
-                if (vm.ImageFile != null)
-                {
-                    vm.ImageUrl = UploadImage(vm.ImageFile);
-                }
-
-                await _postService.Update(vm);
-                return RedirectToAction("Index", "Home");
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return View(vm);
-            }
-        }
-
-        // POST: /Post/Delete/{id}
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                await _postService.Delete(id);
-            }
-            catch (Exception ex)
-            {
-                // Guardamos el error en TempData para mostrarlo en Home (o donde prefieras)
-                TempData["ErrorMessage"] = ex.Message;
+                return View("SavePost", vm);
             }
 
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var postOwnerId = await _postService.GetPostOwnerIdById(vm.Id);
+
+            if (postOwnerId != currentUserId)
+            {
+                return Unauthorized();
+            }
+
+            if (vm.ImageFile != null)
+            {
+                vm.ImageUrl = UploadImage(vm.ImageFile);
+            }
+            else
+            {
+                var existing = await _postService.GetByIdSaveViewModel(vm.Id);
+                vm.ImageUrl = existing.ImageUrl;
+            }
+
+            await _postService.Update(vm);
             return RedirectToAction("Index", "Home");
         }
 
-        /// <summary>
-        /// Sube la imagen al servidor (wwwroot) organizándola por usuario.
-        /// </summary>
+        public async Task<IActionResult> Delete(int id)
+        {
+            var postVm = await _postService.GetByIdSaveViewModel(id);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var postOwnerId = await _postService.GetPostOwnerIdById(id);
+
+            if (postOwnerId != currentUserId)
+            {
+                return Unauthorized();
+            }
+
+            return View("DeletePost", postVm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePost(int id)
+        {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var postOwnerId = await _postService.GetPostOwnerIdById(id);
+
+            if (postOwnerId != currentUserId)
+            {
+                return Unauthorized();
+            }
+
+            await _postService.Delete(id);
+            return RedirectToAction("Index", "Home");
+        }
+
         private string UploadImage(IFormFile file)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return null;
+
             string basePath = $"/Images/Posts/{userId}";
             string path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot{basePath}");
 
             if (!Directory.Exists(path))
+            {
                 Directory.CreateDirectory(path);
+            }
 
-            var guid = Guid.NewGuid();
-            var fileInfo = new FileInfo(file.FileName);
-            var fileName = guid + fileInfo.Extension;
-            var finalPath = Path.Combine(path, fileName);
+            Guid guid = Guid.NewGuid();
+            string fileName = guid + Path.GetExtension(file.FileName);
+            string finalPath = Path.Combine(path, fileName);
 
             using (var stream = new FileStream(finalPath, FileMode.Create))
             {

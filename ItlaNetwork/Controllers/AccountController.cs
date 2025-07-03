@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿// Ubicación: ItlaNetwork/Controllers/AccountController.cs
+
+using AutoMapper;
 using ItlaNetwork.Core.Application.DTOs.Account;
 using ItlaNetwork.Core.Application.Interfaces.Services;
 using ItlaNetwork.Core.Application.ViewModels.Account;
@@ -37,8 +39,6 @@ namespace ItlaNetwork.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // Si la validación básica falla (campos vacíos), devuelve la vista.
-            // Los errores se mostrarán automáticamente junto a cada campo.
             if (!ModelState.IsValid)
             {
                 return View(vm);
@@ -49,8 +49,6 @@ namespace ItlaNetwork.Controllers
 
             if (response.HasError)
             {
-                // Si el error viene del servicio (credenciales, cuenta no activa),
-                // lo añadimos al ModelState para que el ValidationSummary lo muestre.
                 ModelState.AddModelError("LoginError", response.Error);
                 return View(vm);
             }
@@ -58,6 +56,41 @@ namespace ItlaNetwork.Controllers
             HttpContext.Session.Set<AuthenticationResponse>("user", response);
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Register()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View(new RegisterViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel vm)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            var request = _mapper.Map<RegisterRequest>(vm);
+            var origin = Request.Headers["origin"];
+            var response = await _accountService.RegisterUserAsync(request, origin);
+
+            if (response.HasError)
+            {
+                ModelState.AddModelError("RegisterError", response.Error);
+                return View(vm);
+            }
+
+            return RedirectToAction("ConfirmAccountInfo");
         }
 
         public async Task<IActionResult> Logout()

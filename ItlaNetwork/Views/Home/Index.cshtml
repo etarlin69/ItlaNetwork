@@ -6,17 +6,7 @@
 
 <div class="row">
     <div class="col-12">
-        @* --- Formulario de creación de post --- *@
         <partial name="_CreatePostForm" model="Model.NewPost" />
-
-        @* ————— Aquí mostramos todos los errores generales de ModelState ————— *@
-        @Html.ValidationSummary(
-        excludePropertyErrors: true,
-                message: null,
-                htmlAttributes: new { @class = "alert alert-danger mt-3" }
-                )
-
-        @* ————— Inicio del feed de posts ————— *@
         <div class="feed-container mt-4">
             @if (Model.Posts == null || !Model.Posts.Any())
             {
@@ -35,6 +25,5 @@
                 }
             }
         </div>
-        @* ————— Fin del feed de posts ————— *@
     </div>
 </div>

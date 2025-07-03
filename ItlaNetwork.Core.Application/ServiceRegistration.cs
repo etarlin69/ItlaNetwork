@@ -12,6 +12,7 @@ namespace ItlaNetwork.Core.Application
             // Registers AutoMapper and finds all profiles in this assembly.
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+
             #region Application Services
             // This file is responsible for registering services that are implemented
             // within the Core.Application layer itself.

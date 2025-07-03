@@ -102,6 +102,9 @@ header, footer {
         }
 
 .feed-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra las .glass-card si tienen ancho menor */
     padding: 5px;
     border-radius: 0.75rem;
 }
@@ -111,7 +114,9 @@ header, footer {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 0.75rem;
     padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin: 1.5rem auto;
+    max-width: 620px; /* ancho máximo deseado para los posts */
+    width: 100%; /* que se ajuste si la pantalla es más pequeña */
 }
 
 .post-card-header {
@@ -136,11 +141,14 @@ header, footer {
 }
 
 .post-card-image {
-    width: 100%;
+    max-width: 100%;
     max-height: 350px;
-    object-fit: cover;
-    border-radius: 0.5rem;
+    width: auto;
+    height: auto;
+    display: block;
     margin-top: 1rem;
+    object-fit: contain;
+    border-radius: 0.5rem;
 }
 
 .profile-pic-container {
@@ -301,14 +309,32 @@ footer.footer {
     font-size: 0.9rem;
 }
 
+
+
+.user-list-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.2s ease-in-out;
+}
+
+    .user-list-item:last-child {
+        border-bottom: none;
+    }
 /* --- Estilos para Reacciones --- */
+.reaction-container {
+    display: flex;
+    align-items: center;
+}
+
 .reaction-btn {
     color: #a0aec0; /* Color grisáceo por defecto */
     text-decoration: none;
     transition: all 0.2s ease-in-out;
     display: flex;
     align-items: center;
-    gap: 6px; /* Espacio entre el icono y el contador */
+    gap: 6px;
 }
 
     .reaction-btn:hover {
@@ -347,19 +373,6 @@ footer.footer {
     font-size: 0.9rem;
     font-weight: 500;
 }
-
-.user-list-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    transition: background-color 0.2s ease-in-out;
-}
-
-    .user-list-item:last-child {
-        border-bottom: none;
-    }
-
     .user-list-item:hover {
         background-color: rgba(255, 255, 255, 0.05);
     }
@@ -407,3 +420,20 @@ footer.footer {
 .modal-footer {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+.post-video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* proporción 16:9 */
+    height: 0;
+    overflow: hidden;
+    border-radius: 0.5rem;
+}
+
+    .post-video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }

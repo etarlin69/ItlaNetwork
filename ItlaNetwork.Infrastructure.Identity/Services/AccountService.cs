@@ -79,6 +79,16 @@ namespace ItlaNetwork.Infrastructure.Identity.Services
             return response;
         }
 
+        public async Task<User> GetUserByIdAsync(string userId)
+        {
+            var applicationUser = await _userManager.FindByIdAsync(userId);
+            if (applicationUser == null) return null;
+
+            // Mapeamos del modelo de infraestructura al de dominio
+            var user = _mapper.Map<User>(applicationUser);
+            return user;
+        }
+
         public async Task<RegisterResponse> RegisterUserAsync(RegisterRequest request, string origin)
         {
             var response = new RegisterResponse();

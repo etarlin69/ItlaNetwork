@@ -1,0 +1,58 @@
+﻿@using ItlaNetwork.Core.Application.ViewModels.Comment
+@model IEnumerable<CommentViewModel>
+
+@{
+    // Si no hay modelo o es null, lo tratamos como lista vacía
+    var comments = Model ?? Enumerable.Empty<CommentViewModel>();
+}
+
+@if (!comments.Any())
+{
+    <p class="text-white-50">No hay comentarios aún.</p>
+}
+else
+{
+    <ul class="list-group list-group-flush mb-3">
+        @foreach (var comment in comments)
+        {
+            <li class="list-group-item bg-transparent text-white p-2">
+                <div class="d-flex align-items-start">
+                    <div class="me-2">
+                        @if (!string.IsNullOrEmpty(comment.AuthorProfilePictureUrl))
+                        {
+                            <img src="@comment.AuthorProfilePictureUrl"
+                                 class="rounded-circle"
+                                 style="width:30px; height:30px;"
+                                 alt="@comment.AuthorFullName" />
+                        }
+                        else
+                        {
+                            <i class="fa-solid fa-user-astronaut fa-2x text-white-50"></i>
+                        }
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="small">
+                            <strong>@comment.AuthorFullName</strong>
+                            <span class="text-white-50 ms-2">
+                                @comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                            </span>
+                        </div>
+                        <p class="mb-1">@comment.Content</p>
+                        <button class="btn btn-sm btn-outline-light"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#reply-@comment.Id">
+                            Responder
+                        </button>
+                        <div class="collapse mt-2" id="reply-@comment.Id">
+                            @Html.Partial("_CommentForm", new SaveCommentViewModel {
+                            PostId = comment.PostId,
+                                        ParentCommentId = comment.Id
+                                        })
+                </div>
+            </div>
+        </div>
+    </li>
+        }
+</ul>
+}

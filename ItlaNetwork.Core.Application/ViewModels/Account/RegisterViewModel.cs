@@ -32,9 +32,5 @@ namespace ItlaNetwork.Core.Application.ViewModels.Account
         [Required(ErrorMessage = "Debe colocar un número de teléfono")]
         [DataType(DataType.Text)]
         public string Phone { get; set; }
-
-        // Esta propiedad es para mostrar errores, NUNCA debe ser requerida.
-        public bool HasError { get; set; }
-        public string Error { get; set; }
     }
 }

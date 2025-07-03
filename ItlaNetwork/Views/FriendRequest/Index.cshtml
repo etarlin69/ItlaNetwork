@@ -4,97 +4,94 @@
     ViewData["Title"] = "Solicitudes de Amistad";
 }
 
-<div class="container main-container">
-    <div class="row">
-        <div class="col-12 col-md-10 col-lg-8 mx-auto">
+<div class="row">
+    <div class="col-12 col-md-10 col-lg-8 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="text-white">Gestionar Solicitudes</h3>
+            <a asp-controller="FriendRequest" asp-action="AddFriend" class="btn btn-gradient"><i class="fa fa-plus"></i> Nueva Solicitud</a>
+        </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="text-white">Gestionar Solicitudes</h3>
-                <a asp-controller="FriendRequest" asp-action="AddFriend" class="btn btn-gradient"><i class="fa fa-plus"></i> Nueva Solicitud</a>
-            </div>
-
-            <div class="glass-card mb-4">
-                <h5 class="text-white border-bottom border-secondary pb-2 mb-3">Solicitudes Recibidas</h5>
-                @if (Model.ReceivedRequests == null || !Model.ReceivedRequests.Any())
-                {
-                    <p class="text-center text-white-50">No tienes solicitudes de amistad pendientes.</p>
-                }
-                else
-                {
-                    <ul class="list-group list-group-flush">
-                        @foreach (var request in Model.ReceivedRequests)
-                        {
-                            <li class="list-group-item bg-transparent user-list-item text-white">
-                                <div class="profile-pic-container">
-                                    @if (!string.IsNullOrEmpty(request.RequestingUserProfilePictureUrl))
-                                    {
-                                        <img src="@request.RequestingUserProfilePictureUrl" alt="Foto de @request.RequestingUserName" class="profile-pic" />
-                                    }
-                                    else
-                                    {
-                                        <i class="fa-solid fa-user-astronaut profile-pic-default"></i>
-                                    }
-                                </div>
-                                <div class="user-info">
-                                    <div class="user-name">@request.RequestingUserName</div>
-                                    <div class="user-details">Enviada el @request.Created.ToString("dd/MM/yyyy")</div>
-                                </div>
-                                <div class="action-buttons">
-                                    <form asp-controller="FriendRequest" asp-action="Accept" method="post" onsubmit="return confirm('¿Estás seguro de que quieres aceptar a este usuario?');">
-                                        <input type="hidden" name="requestingUserId" value="@request.RequestingUserId" />
-                                        <button type="submit" class="btn btn-success btn-sm" title="Aceptar"><i class="fa fa-check"></i></button>
-                                    </form>
-                                    <form asp-controller="FriendRequest" asp-action="Reject" method="post" onsubmit="return confirm('¿Estás seguro de que quieres rechazar a este usuario?');">
-                                        <input type="hidden" name="requestingUserId" value="@request.RequestingUserId" />
-                                        <button type="submit" class="btn btn-danger btn-sm" title="Rechazar"><i class="fa fa-times"></i></button>
-                                    </form>
-                                </div>
-                            </li>
-                        }
-                    </ul>
-                }
-            </div>
-
-            <div class="glass-card">
-                <h5 class="text-white border-bottom border-secondary pb-2 mb-3">Solicitudes Enviadas</h5>
-                @if (Model.SentRequests == null || !Model.SentRequests.Any())
-                {
-                    <p class="text-center text-white-50">No has enviado ninguna solicitud.</p>
-                }
-                else
-                {
-                    <ul class="list-group list-group-flush">
-                        @foreach (var request in Model.SentRequests)
-                        {
-                            <li class="list-group-item bg-transparent user-list-item text-white">
-                                <div class="profile-pic-container">
-                                    @if (!string.IsNullOrEmpty(request.RequestingUserProfilePictureUrl))
-                                    {
-                                        <img src="@request.RequestingUserProfilePictureUrl" alt="Foto de @request.RequestingUserName" class="profile-pic" />
-                                    }
-                                    else
-                                    {
-                                        <i class="fa-solid fa-user-astronaut profile-pic-default"></i>
-                                    }
-                                </div>
-                                <div class="user-info">
-                                    <div class="user-name">@request.RequestingUserName</div>
-                                    <div class="user-details">Estado: @request.Status</div>
-                                </div>
-                                @if (request.Status == "Pending")
+        <div class="glass-card mb-4">
+            <h5 class="text-white border-bottom border-secondary pb-2 mb-3">Solicitudes Recibidas</h5>
+            @if (Model.ReceivedRequests == null || !Model.ReceivedRequests.Any())
+            {
+                <p class="text-center text-white-50">No tienes solicitudes de amistad pendientes.</p>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var request in Model.ReceivedRequests)
+                    {
+                        <li class="list-group-item bg-transparent user-list-item text-white">
+                            <div class="profile-pic-container">
+                                @if (!string.IsNullOrEmpty(request.RequestingUserProfilePictureUrl))
                                 {
-                                    <div class="action-buttons">
-                                        <form asp-controller="FriendRequest" asp-action="Delete" method="post" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta solicitud enviada?');">
-                                            <input type="hidden" name="id" value="@request.Id" />
-                                            <button type="submit" class="btn btn-warning btn-sm" title="Cancelar Solicitud"><i class="fa fa-trash-alt"></i></button>
-                                        </form>
-                                    </div>
+                                    <img src="@request.RequestingUserProfilePictureUrl" alt="Foto de @request.RequestingUserName" class="profile-pic" />
                                 }
-                            </li>
-                        }
-                    </ul>
-                }
-            </div>
+                                else
+                                {
+                                    <i class="fa-solid fa-user-astronaut profile-pic-default"></i>
+                                }
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">@request.RequestingUserName</div>
+                                <div class="user-details">Enviada el @request.Created.ToString("dd/MM/yyyy")</div>
+                            </div>
+                            <div class="action-buttons">
+                                <form asp-controller="FriendRequest" asp-action="Accept" method="post">
+                                    <input type="hidden" name="id" value="@request.Id" />
+                                    <button type="submit" class="btn btn-success btn-sm" title="Aceptar"><i class="fa fa-check"></i></button>
+                                </form>
+                                <form asp-controller="FriendRequest" asp-action="Reject" method="post">
+                                    <input type="hidden" name="id" value="@request.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Rechazar"><i class="fa fa-times"></i></button>
+                                </form>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+
+        <div class="glass-card">
+            <h5 class="text-white border-bottom border-secondary pb-2 mb-3">Solicitudes Enviadas</h5>
+            @if (Model.SentRequests == null || !Model.SentRequests.Any())
+            {
+                <p class="text-center text-white-50">No has enviado ninguna solicitud.</p>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var request in Model.SentRequests)
+                    {
+                        <li class="list-group-item bg-transparent user-list-item text-white">
+                            <div class="profile-pic-container">
+                                @if (!string.IsNullOrEmpty(request.RequestingUserProfilePictureUrl))
+                                {
+                                    <img src="@request.RequestingUserProfilePictureUrl" alt="Foto de @request.RequestingUserName" class="profile-pic" />
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-user-astronaut profile-pic-default"></i>
+                                }
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">@request.RequestingUserName</div>
+                                <div class="user-details">Estado: @request.Status</div>
+                            </div>
+                            @if (request.Status == "Pending")
+                            {
+                                <div class="action-buttons">
+                                    <form asp-controller="FriendRequest" asp-action="Reject" method="post">
+                                        <input type="hidden" name="id" value="@request.Id" />
+                                        <button type="submit" class="btn btn-warning btn-sm" title="Cancelar Solicitud"><i class="fa fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
         </div>
     </div>
 </div>

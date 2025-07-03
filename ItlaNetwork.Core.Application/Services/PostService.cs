@@ -40,9 +40,12 @@ namespace ItlaNetwork.Core.Application.Services
         public async Task<SavePostViewModel> Add(SavePostViewModel vm)
         {
             var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(currentUserId))
+            if (string.IsNullOrEmpty(currentUserId)) return null;
+
+            // Evitar que Content sea null al guardar en BD
+            if (string.IsNullOrWhiteSpace(vm.Content))
             {
-                return null;
+                vm.Content = "";
             }
 
             var post = _mapper.Map<Post>(vm);
@@ -54,14 +57,26 @@ namespace ItlaNetwork.Core.Application.Services
 
         public async Task Update(SavePostViewModel vm)
         {
-            var post = _mapper.Map<Post>(vm);
-            await _postRepository.UpdateAsync(post);
+            var existingPost = await _postRepository.GetByIdAsync(vm.Id);
+            if (existingPost == null) return;
+
+            var updatedPost = _mapper.Map<Post>(vm);
+            updatedPost.UserId = existingPost.UserId; // preservar autor original
+
+            // Asegurar que Content no sea null
+            if (string.IsNullOrWhiteSpace(updatedPost.Content))
+            {
+                updatedPost.Content = "";
+            }
+
+            await _postRepository.UpdateAsync(updatedPost);
         }
 
         public async Task Delete(int id)
         {
             var post = await _postRepository.GetByIdAsync(id);
-            await _postRepository.DeleteAsync(post);
+            if (post != null)
+                await _postRepository.DeleteAsync(post);
         }
 
         public async Task<SavePostViewModel> GetByIdSaveViewModel(int id)
@@ -70,20 +85,23 @@ namespace ItlaNetwork.Core.Application.Services
             return _mapper.Map<SavePostViewModel>(post);
         }
 
+        public async Task<string> GetPostOwnerIdById(int id)
+        {
+            var post = await _postRepository.GetByIdAsync(id);
+            return post?.UserId;
+        }
+
         public async Task<List<PostViewModel>> GetAllViewModel()
         {
             var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
             var postList = await _postRepository.GetAllAsync();
 
             if (postList == null || !postList.Any())
-            {
                 return new List<PostViewModel>();
-            }
 
             var postViewModels = _mapper.Map<List<PostViewModel>>(postList);
             var postIds = postList.Select(p => p.Id).ToList();
 
-            // Optimización: Obtener todos los datos relacionados en pocas llamadas
             var allComments = await _commentRepository.GetAllByPostIdListAsync(postIds);
             var allReactions = await _reactionRepository.GetAllByPostIdListAsync(postIds);
             var allUserIds = postList.Select(p => p.UserId)
@@ -91,7 +109,6 @@ namespace ItlaNetwork.Core.Application.Services
                                      .Distinct().ToList();
             var users = await _accountService.GetUsersByIdsAsync(allUserIds);
 
-            // "Unir" los datos en cada ViewModel
             foreach (var postVm in postViewModels)
             {
                 var author = users.FirstOrDefault(u => u.Id == postVm.UserId);

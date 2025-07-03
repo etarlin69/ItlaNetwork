@@ -13,20 +13,45 @@ namespace ItlaNetwork.Core.Application.Mappings
     {
         public GeneralProfile()
         {
-            // El mapeo de Post a SavePostViewModel y viceversa ya funciona
-            // correctamente gracias a que AutoMapper mapea por nombre de propiedad.
-            CreateMap<Post, SavePostViewModel>().ReverseMap();
+            // POSTS
+            CreateMap<Post, SavePostViewModel>()
+                .ReverseMap();
+            CreateMap<Post, PostViewModel>()
+                .ReverseMap();
 
-            // El resto de tus mapeos...
-            CreateMap<LoginViewModel, AuthenticationRequest>().ReverseMap();
-            CreateMap<RegisterViewModel, RegisterRequest>().ReverseMap();
-            CreateMap<User, FriendViewModel>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)).ReverseMap();
-            CreateMap<Post, PostViewModel>().ReverseMap();
-            CreateMap<SaveCommentViewModel, Comment>().ReverseMap();
-            CreateMap<Comment, CommentViewModel>().ReverseMap();
-            CreateMap<SaveReactionViewModel, Reaction>().ReverseMap();
-            CreateMap<Reaction, ReactionViewModel>().ReverseMap();
-            CreateMap<FriendRequest, FriendRequestViewModel>().ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString())).ReverseMap();
+            // AUTENTICACIÓN
+            CreateMap<LoginViewModel, AuthenticationRequest>()
+                .ReverseMap();
+            CreateMap<RegisterViewModel, RegisterRequest>()
+                .ReverseMap();
+
+            // COMENTARIOS
+            CreateMap<SaveCommentViewModel, Comment>()
+                .ReverseMap();
+            CreateMap<Comment, CommentViewModel>()
+                .ForMember(dest => dest.PostId,
+                           opt => opt.MapFrom(src => src.PostId))
+                .ReverseMap();
+
+            // REACCIONES
+            CreateMap<SaveReactionViewModel, Reaction>()
+                .ReverseMap();
+            CreateMap<Reaction, ReactionViewModel>()
+                .ReverseMap();
+
+            // AMIGOS
+            CreateMap<User, FriendViewModel>()
+                .ForMember(dest => dest.Id,
+                           opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserId,
+                           opt => opt.MapFrom(src => src.Id))
+                .ReverseMap();
+
+            // SOLICITUDES DE AMISTAD
+            CreateMap<FriendRequest, FriendRequestViewModel>()
+                .ForMember(dest => dest.Status,
+                           opt => opt.MapFrom(src => src.Status.ToString()))
+                .ReverseMap();
         }
     }
 }

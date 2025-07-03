@@ -17,5 +17,6 @@ namespace ItlaNetwork.Core.Application.Interfaces.Services
         // --- New methods needed for "stitching" data in other services ---
         Task<List<User>> GetAllUsersAsync();
         Task<List<User>> GetUsersByIdsAsync(List<string> userIds);
+        Task<User> GetUserByIdAsync(string userId);
     }
 }

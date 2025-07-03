@@ -3,7 +3,7 @@
     public int Id { get; set; }
     public string RequestingUserId { get; set; }
     public string RequestingUserName { get; set; }
-    public string RequestingUserProfilePictureUrl { get; set; }
+    public string? RequestingUserProfilePictureUrl { get; set; }
     public DateTime Created { get; set; }
-    public string Status { get; set; } // Opcional, para mostrar estado en solicitudes enviadas
+    public string Status { get; set; } // "Pending", etc.
 }

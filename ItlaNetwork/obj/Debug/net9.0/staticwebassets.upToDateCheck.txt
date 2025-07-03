@@ -70,6 +70,11 @@ wwwroot\images\logo-itlanetwork.png
 wwwroot\images\Posts\4a9cae2e-1d18-45ee-b527-d1546c4ef2a3\d242b4ef-8df4-4cc2-b0e8-b2c3a047ecd0.jpg
 wwwroot\images\Posts\78fb2a33-0dc3-4a20-ab25-d76b9142961d\15636821-7c0a-4a20-bcbe-73071998696a.jpeg
 wwwroot\images\Posts\78fb2a33-0dc3-4a20-ab25-d76b9142961d\a8ba9dc0-0790-437f-b39e-36c8a7785881.jpg
+wwwroot\images\Posts\c0d5b1ae-ebfc-4164-8fe1-5ca0a850806a\26ba513f-ffac-47fd-843a-54dd7134425d.jpg
+wwwroot\images\Posts\c0d5b1ae-ebfc-4164-8fe1-5ca0a850806a\544442dd-504b-4443-b341-8bb5093b1594.png
+wwwroot\images\Posts\c0d5b1ae-ebfc-4164-8fe1-5ca0a850806a\58114e13-a242-4e49-b968-ad5f6a356e8b.jpg
+wwwroot\images\Posts\c0d5b1ae-ebfc-4164-8fe1-5ca0a850806a\92cc7a1c-3476-4841-ab6c-02459ebf0096.jpg
+wwwroot\images\Posts\c0d5b1ae-ebfc-4164-8fe1-5ca0a850806a\bf09f26b-ddd9-4d05-8189-025caab81a68.jpg
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap.css
 wwwroot\lib\bootstrap\dist\css\bootstrap.css.map

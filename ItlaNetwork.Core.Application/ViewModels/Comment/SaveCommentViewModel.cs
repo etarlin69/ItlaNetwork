@@ -1,9 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ItlaNetwork.Core.Application.ViewModels.Comment
 {
-    // ViewModel para crear o editar un comentario
     public class SaveCommentViewModel
     {
         public int Id { get; set; }
@@ -11,7 +9,12 @@ namespace ItlaNetwork.Core.Application.ViewModels.Comment
         [Required(ErrorMessage = "El comentario no puede estar vacío")]
         public string Content { get; set; }
 
+        // Estos campos sí son necesarios y vienen del formulario.
         public int PostId { get; set; }
         public int? ParentCommentId { get; set; }
+
+        // --- CORRECCIÓN ---
+        // La propiedad UserId ha sido eliminada. El servicio se encarga de obtenerla
+        // del usuario autenticado, por lo que no debe ser parte del ViewModel del formulario.
     }
 }

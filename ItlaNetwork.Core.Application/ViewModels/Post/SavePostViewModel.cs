@@ -1,24 +1,26 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
-namespace ItlaNetwork.Core.Application.ViewModels.Post
+public class SavePostViewModel : IValidatableObject
 {
-    public class SavePostViewModel
+    public int Id { get; set; }
+
+    [MaxLength(800)]
+    public string? Content { get; set; }
+
+    public IFormFile? ImageFile { get; set; }
+
+    public string? ImageUrl { get; set; }
+
+    public string? VideoUrl { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        public int Id { get; set; }
-
-        [Required(ErrorMessage = "Debe colocar el contenido de la publicación")]
-        public string Content { get; set; }
-
-        public string? ImageUrl { get; set; }
-
-        [DataType(DataType.Upload)]
-        public IFormFile? ImageFile { get; set; }
-
-        // --- CORRECCIÓN ---
-        // Se vuelve a añadir la propiedad UserId, pero SIN el atributo [Required].
-        // Esto permite que el modelo sea válido al crear un post (donde el UserId viene del servidor),
-        // y que esté disponible para las comprobaciones de autorización.
-        public string UserId { get; set; }
+        if (string.IsNullOrWhiteSpace(Content) && ImageFile == null && string.IsNullOrWhiteSpace(VideoUrl))
+        {
+            yield return new ValidationResult(
+                "Debes escribir algo, subir una imagen o ingresar un video.",
+                new[] { nameof(Content), nameof(ImageFile), nameof(VideoUrl) });
+        }
     }
 }
