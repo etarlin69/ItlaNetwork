@@ -10,7 +10,7 @@
         <div class="glass-card">
             <h3 class="text-white mb-4">Añadir Amigo</h3>
 
-            @* Mensajes de éxito o error *@
+            
             @if (TempData["Error"] != null)
             {
                 <div class="alert alert-danger">
@@ -24,7 +24,7 @@
                 </div>
             }
 
-            @* Formulario de búsqueda *@
+            
             <form asp-controller="Friend"
                   asp-action="Add"
                   method="get"
@@ -41,7 +41,7 @@
                 </div>
             </form>
 
-            @* Formulario de envío de solicitud *@
+            
             <form asp-controller="Friend"
                   asp-action="SendRequest"
                   method="post">

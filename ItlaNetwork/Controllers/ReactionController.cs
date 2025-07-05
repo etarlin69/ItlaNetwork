@@ -1,4 +1,4 @@
-﻿// Location: ItlaNetwork/Controllers/ReactionController.cs
+﻿
 
 using ItlaNetwork.Core.Application.Interfaces.Services;
 using ItlaNetwork.Core.Application.ViewModels.Reaction;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ItlaNetwork.Controllers
 {
-    [Authorize] // Ensures only authenticated users can access this controller
+    [Authorize] 
     public class ReactionController : Controller
     {
         private readonly IReactionService _reactionService;
@@ -26,15 +26,15 @@ namespace ItlaNetwork.Controllers
                 return BadRequest(new { success = false, message = "Invalid data." });
             }
 
-            // The service now handles getting the user's ID and returns all the data we need.
+            
             var response = await _reactionService.ToggleReactionAsync(vm);
 
             if (response == null)
             {
-                return Unauthorized(); // Or another appropriate error
+                return Unauthorized(); 
             }
 
-            // Return the updated counts and user reaction status as JSON.
+            
             return Json(response);
         }
     }

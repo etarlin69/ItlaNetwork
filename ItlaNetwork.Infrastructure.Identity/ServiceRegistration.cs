@@ -58,23 +58,22 @@ namespace ItlaNetwork.Infrastructure.Identity
             #endregion
 
             #region Authentication
-            // Configures the behavior of the authentication cookies.
+            
             services.ConfigureApplicationCookie(options =>
             {
-                // Defines the path to which an unauthenticated user trying to access a protected resource will be redirected.
+                
                 options.LoginPath = "/Account/Login";
-                // Defines the path to which a user who does not have the necessary permissions will be redirected.
+                
                 options.AccessDeniedPath = "/Account/AccessDenied";
-                options.ExpireTimeSpan = TimeSpan.FromDays(30); // Session cookie duration.
-                options.SlidingExpiration = true; // The cookie is renewed if the user is active.
+                options.ExpireTimeSpan = TimeSpan.FromDays(30); 
+                options.SlidingExpiration = true; 
             });
             #endregion
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             #region Services
-            // Registers the services created in this layer so they can be injected into other parts of the application.
-            // AddTransient is used because Identity services (UserManager, SignInManager) are already registered with this lifecycle.
+            
             services.AddTransient<IAccountService, AccountService>();
             #endregion
         }

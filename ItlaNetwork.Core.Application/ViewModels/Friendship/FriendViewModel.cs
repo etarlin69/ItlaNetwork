@@ -2,8 +2,7 @@
 {
     public class FriendViewModel
     {
-        // FIX: Added 'Id' property to solve the error in Friend/Index.cshtml.
-        // It's the same as UserId but matches what the view expects.
+        
         public string Id { get; set; }
         public string UserId { get; set; }
         public string FirstName { get; set; }

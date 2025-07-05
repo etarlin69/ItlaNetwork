@@ -2,6 +2,8 @@
 @{
     Layout = null;
     ViewData["Title"] = "Iniciar Sesión";
+    
+    var hasErrors = ViewData.ModelState.ErrorCount > 0;
 }
 
 <!DOCTYPE html>
@@ -19,22 +21,42 @@
     <div class="login-card">
         <img src="~/images/logo-itlanetwork.png" alt="Logo ItlaNetwork" class="account-logo" />
         <div class="text-center mb-4">
-            <h2 class="text-uppercase">Bienvenido de Nuevo</h2>
+            <h2 class="text-uppercase">Bienvenido</h2>
         </div>
 
-        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+        
+        @if (hasErrors)
+        {
+            <div asp-validation-summary="All"
+                 class="alert alert-danger alert-dismissible fade show"
+                 role="alert">
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Cerrar"></button>
+            </div>
+        }
 
-        <form asp-controller="Account" asp-action="Login" method="post" class="p-2">
+        <form asp-controller="Account"
+              asp-action="Login"
+              method="post"
+              class="p-2">
             <div class="input-group-icon mb-4">
                 <i class="fa-solid fa-user input-icon"></i>
-                <input asp-for="UserNameOrEmail" type="text" class="form-control" placeholder=" " />
+                <input asp-for="UserNameOrEmail"
+                       type="text"
+                       class="form-control"
+                       placeholder=" " />
                 <label asp-for="UserNameOrEmail">Usuario o Correo</label>
                 <span asp-validation-for="UserNameOrEmail" class="text-danger"></span>
             </div>
 
             <div class="input-group-icon mb-4">
                 <i class="fa-solid fa-lock input-icon"></i>
-                <input asp-for="Password" type="password" class="form-control" placeholder=" " />
+                <input asp-for="Password"
+                       type="password"
+                       class="form-control"
+                       placeholder=" " />
                 <label asp-for="Password">Contraseña</label>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
@@ -45,7 +67,10 @@
         </form>
 
         <div class="mt-4 text-center register-link">
-            <p class="mb-0 text-white-50">¿No tienes una cuenta? <a asp-action="Register">Regístrate</a></p>
+            <p class="mb-0 text-white-50">
+                ¿No tienes una cuenta?
+                <a asp-action="Register">Regístrate</a>
+            </p>
         </div>
     </div>
 

@@ -7,6 +7,6 @@ namespace ItlaNetwork.Core.Application.Interfaces.Repositories
     {
         Task<Reaction> GetByPostAndUserIdAsync(int postId, string userId);
         Task<List<Reaction>> GetAllByPostIdAsync(int postId);
-        Task<List<Reaction>> GetAllByPostIdListAsync(List<int> postIds); // Esencial para la optimización
+        Task<List<Reaction>> GetAllByPostIdListAsync(List<int> postIds); 
     }
 }

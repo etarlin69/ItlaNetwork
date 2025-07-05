@@ -5,7 +5,7 @@ namespace ItlaNetwork.Core.Domain.Entities
     public class FriendRequest : AuditableBaseEntity
     {
         public FriendRequestStatus Status { get; set; }
-        public string SenderId { get; set; } // Clave Foránea
-        public string ReceiverId { get; set; } // Clave Foránea
+        public string SenderId { get; set; } 
+        public string ReceiverId { get; set; } 
     }
 }

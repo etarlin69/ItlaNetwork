@@ -18,7 +18,7 @@ namespace ItlaNetwork.Core.Application.Services
         private readonly IFriendshipRepository _friendshipRepository;
         private readonly IFriendRequestRepository _friendRequestRepository;
         private readonly IAccountService _accountService;
-        private readonly IPostRepository _postRepository;
+        private readonly IPostService _postService;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -26,14 +26,14 @@ namespace ItlaNetwork.Core.Application.Services
             IFriendshipRepository friendshipRepository,
             IFriendRequestRepository friendRequestRepository,
             IAccountService accountService,
-            IPostRepository postRepository,
+            IPostService postService,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor)
         {
             _friendshipRepository = friendshipRepository;
             _friendRequestRepository = friendRequestRepository;
             _accountService = accountService;
-            _postRepository = postRepository;
+            _postService = postService;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -180,29 +180,37 @@ namespace ItlaNetwork.Core.Application.Services
 
         public async Task<List<PostViewModel>> GetFriendsPostsAsync()
         {
-            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(currentUserId)) return new List<PostViewModel>();
+            
+            var allPosts = await _postService.GetAllViewModel();
 
+            
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
             var friendships = await _friendshipRepository.GetAllByUserIdAsync(currentUserId);
             var friendIds = friendships
                 .Select(f => f.UserId == currentUserId ? f.FriendId : f.UserId)
                 .Distinct()
                 .ToList();
 
-            if (!friendIds.Any()) return new List<PostViewModel>();
+            var friendPosts = allPosts
+                .Where(p => friendIds.Contains(p.UserId))
+                .OrderByDescending(p => p.CreatedAt)
+                .ToList();
 
-            var posts = await _postRepository.GetAllByUserIdsAsync(friendIds);
-            var ordered = posts.OrderByDescending(p => p.CreatedAt);
-            return _mapper.Map<List<PostViewModel>>(ordered);
+            return friendPosts;
         }
 
         public async Task<List<PostViewModel>> GetPostsByFriendAsync(string friendUserId)
         {
-            if (string.IsNullOrEmpty(friendUserId)) return new List<PostViewModel>();
+            
+            var allPosts = await _postService.GetAllViewModel();
 
-            var posts = await _postRepository.GetAllByUserIdsAsync(new List<string> { friendUserId });
-            var ordered = posts.OrderByDescending(p => p.CreatedAt);
-            return _mapper.Map<List<PostViewModel>>(ordered);
+            
+            var friendPosts = allPosts
+                .Where(p => p.UserId == friendUserId)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToList();
+
+            return friendPosts;
         }
     }
 }

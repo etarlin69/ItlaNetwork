@@ -1,7 +1,8 @@
-﻿using ItlaNetwork.Core.Application.DTOs.Account;
-using ItlaNetwork.Core.Domain.Entities; // Required for the User return type
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using ItlaNetwork.Core.Application.DTOs.Account;
+using ItlaNetwork.Core.Application.ViewModels.Account;
+using ItlaNetwork.Core.Domain.Entities; 
 
 namespace ItlaNetwork.Core.Application.Interfaces.Services
 {
@@ -14,9 +15,11 @@ namespace ItlaNetwork.Core.Application.Interfaces.Services
         Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request);
         Task SignOutAsync();
 
-        // --- New methods needed for "stitching" data in other services ---
+        
         Task<List<User>> GetAllUsersAsync();
         Task<List<User>> GetUsersByIdsAsync(List<string> userIds);
         Task<User> GetUserByIdAsync(string userId);
+        Task UpdateProfileAsync(ProfileViewModel model);
+        Task<ChangePasswordResponse> ChangePasswordAsync(string userId, ChangePasswordViewModel vm);
     }
 }

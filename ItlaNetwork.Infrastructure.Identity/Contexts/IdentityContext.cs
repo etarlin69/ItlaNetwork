@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ItlaNetwork.Infrastructure.Identity.Contexts
 {
-    // This DbContext is exclusively for Identity tables.
+    
     public class IdentityContext : IdentityDbContext<ApplicationUser>
     {
         public IdentityContext(DbContextOptions<IdentityContext> options) : base(options) { }

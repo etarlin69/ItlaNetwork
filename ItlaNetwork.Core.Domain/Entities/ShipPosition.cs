@@ -5,6 +5,6 @@ namespace ItlaNetwork.Core.Domain.Entities
     {
         public int Row { get; set; }
         public int Column { get; set; }
-        public int ShipId { get; set; } // Clave Foránea
+        public int ShipId { get; set; } 
     }
 }

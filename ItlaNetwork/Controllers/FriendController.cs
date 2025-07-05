@@ -16,7 +16,7 @@ namespace ItlaNetwork.Controllers
             _friendshipService = friendshipService;
         }
 
-        // GET: /Friend
+        
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -28,7 +28,7 @@ namespace ItlaNetwork.Controllers
             return View(vm);
         }
 
-        // GET: /Friend/ByUser?userId=...
+        
         [HttpGet]
         public async Task<IActionResult> ByUser(string userId)
         {
@@ -40,7 +40,7 @@ namespace ItlaNetwork.Controllers
             return View("Index", vm);
         }
 
-        // GET: /Friend/Add?userNameQuery=...
+        
         [HttpGet]
         public async Task<IActionResult> Add(string userNameQuery)
         {
@@ -50,10 +50,11 @@ namespace ItlaNetwork.Controllers
                 Users = users,
                 UserName = userNameQuery
             };
-            return View("AddFriend", vm);
+            
+            return View("~/Views/FriendRequest/AddFriend.cshtml", vm);
         }
 
-        // POST: /Friend/SendRequest
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendRequest(AddFriendViewModel vm)
@@ -61,15 +62,16 @@ namespace ItlaNetwork.Controllers
             if (string.IsNullOrEmpty(vm.SelectedUserId))
             {
                 TempData["Error"] = "Debe seleccionar un usuario para enviar la solicitud.";
-                return RedirectToAction("Add", new { userNameQuery = vm.UserName });
+                
+                return RedirectToAction(nameof(Add), new { userNameQuery = vm.UserName });
             }
 
             await _friendshipService.SendFriendRequestAsync(vm.SelectedUserId);
             TempData["Success"] = "¡Solicitud de amistad enviada exitosamente!";
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
-        // POST: /Friend/Delete
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string friendId)
@@ -77,7 +79,7 @@ namespace ItlaNetwork.Controllers
             if (!string.IsNullOrEmpty(friendId))
                 await _friendshipService.DeleteFriendAsync(friendId);
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿@using ItlaNetwork.Core.Application.ViewModels.Friendship
 @using ItlaNetwork.Core.Application.ViewModels.Post
-@using ItlaNetwork.Core.Domain.Enums
 @model FriendFeedViewModel
 
 @{
@@ -9,7 +8,7 @@
 
 <div class="container main-container">
     <div class="row">
-        <!-- FEED DE POSTS -->
+        
         <div class="col-lg-8">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="text-white">Publicaciones de tus amigos</h4>
@@ -29,128 +28,14 @@
             {
                 @foreach (var post in Model.Posts)
                 {
-                    <!-- Aquí reutilizamos tu plantilla de PostViewModel -->
-                    <div class="glass-card mb-4 p-0">
-
-                        <!-- CABECERA -->
-                        <div class="post-card-header p-3 d-flex align-items-center">
-                            <div class="profile-pic-container">
-                                @if (!string.IsNullOrEmpty(post.AuthorProfilePictureUrl))
-                                {
-                                    <img src="@post.AuthorProfilePictureUrl"
-                                         alt="Profile picture of @post.AuthorFullName"
-                                         class="profile-pic" />
-                                }
-                                else
-                                {
-                                    <i class="fa-solid fa-user-astronaut profile-pic-default"></i>
-                                }
-                            </div>
-                            <div class="author-info ms-2">
-                                <div class="author-name text-white">
-                                    @post.AuthorFullName
-                                </div>
-                                <div class="post-date text-white-50">
-                                    @post.CreatedAtFormatted
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- CUERPO -->
-                        <div class="post-card-body p-3">
-                            <p class="post-content">@post.Content</p>
-
-                            @* Imagen si existe *@
-                            @if (!string.IsNullOrEmpty(post.ImageUrl))
-                            {
-                                <img src="@post.ImageUrl"
-                                     class="img-fluid rounded post-card-image"
-                                     alt="Post image" />
-                            }
-
-                            @* Vídeo si existe *@
-                            @if (!string.IsNullOrWhiteSpace(post.VideoUrl))
-                            {
-                                <div class="post-video-container mt-3">
-                                    <iframe src="@TransformVideoUrl(post.VideoUrl)"
-                                            frameborder="0"
-                                            allowfullscreen
-                                            loading="lazy">
-                                    </iframe>
-                                </div>
-                            }
-                        </div>
-
-                        <!-- FOOTER -->
-                        <div class="card-footer bg-transparent border-top-0 pt-3 d-flex align-items-center gap-4 px-3">
-                            @{
-                                var likeBtnClass = post.CurrentUserReaction == ReactionType.Like ? "like active" : "like";
-                                var dislikeBtnClass = post.CurrentUserReaction == ReactionType.Dislike ? "dislike active" : "dislike";
-                            }
-                            <form asp-controller="Reaction" asp-action="ToggleLike" method="post" class="d-inline">
-                                <input type="hidden" name="postId" value="@post.Id" />
-                                <a href="javascript:void(0)" class="reaction-btn @likeBtnClass">
-                                    <span class="reaction-icon-container">
-                                        <i class="fa-solid fa-heart"></i>
-                                        <i class="fa-regular fa-heart"></i>
-                                    </span>
-                                    <span class="like-count">@post.LikeCount</span>
-                                </a>
-                            </form>
-                            <form asp-controller="Reaction" asp-action="ToggleDislike" method="post" class="d-inline">
-                                <input type="hidden" name="postId" value="@post.Id" />
-                                <a href="javascript:void(0)" class="reaction-btn @dislikeBtnClass">
-                                    <span class="reaction-icon-container">
-                                        <i class="fa-solid fa-thumbs-down"></i>
-                                        <i class="fa-regular fa-thumbs-down"></i>
-                                    </span>
-                                    <span class="dislike-count">@post.DislikeCount</span>
-                                </a>
-                            </form>
-                            <a href="javascript:void(0)"
-                               class="text-white-50 text-decoration-none toggle-comment-form ms-auto"
-                               data-bs-toggle="collapse"
-                               data-bs-target="#comments-@post.Id">
-                                <i class="fa-regular fa-comment"></i> Comentar (@post.CommentsCount)
-                            </a>
-                        </div>
-
-                        <!-- COMENTARIOS -->
-                        <div class="comments-section collapse" id="comments-@post.Id">
-                            <div class="comment-list" id="comment-list-@post.Id">
-                                @if (post.Comments != null && post.Comments.Any())
-                                {
-                                    @foreach (var comment in post.Comments)
-                                    {
-                                        <partial name="_CommentCard" model="comment" />
-                                    }
-                                }
-                                else
-                                {
-                                    <div class="no-comments-message" id="no-comments-message-@post.Id">
-                                        No hay comentarios todavía. ¡Sé el primero en comentar!
-                                    </div>
-                                }
-                            </div>
-                            <div class="comment-form-container">
-                                <form asp-controller="Comment" asp-action="Create" method="post" class="comment-form new-comment-form px-3 pb-3">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="PostId" value="@post.Id" />
-                                    <textarea name="Content"
-                                      class="form-control"
-                                      rows="1"
-                                      placeholder="Escribe un comentario..."></textarea>
-                                    <button type="submit" class="btn btn-gradient btn-sm ms-2">Enviar</button>
-                                </form>
-                            </div>
-                        </div>
-
+                    <div class="glass-card mb-3">
+                        <partial name="_PostCard" model="post" />
                     </div>
                 }
             }
         </div>
 
-        <!-- LISTADO DE AMIGOS -->
+        
         <div class="col-lg-4">
             <div class="glass-card mt-5 mt-lg-0">
                 <h5 class="text-white border-bottom border-secondary pb-2 mb-3">Tu lista de amigos</h5>
@@ -185,10 +70,14 @@
                                     </a>
                                     <div class="user-details text-white-50">@friend.UserName</div>
                                 </div>
-                                <form asp-action="Delete" method="post" class="action-buttons ms-auto"
+                                <form asp-action="Delete"
+                                      method="post"
+                                      class="action-buttons ms-auto"
                                       onsubmit="return confirm('¿Seguro que quieres eliminar a @friend.UserName?');">
                                     <input type="hidden" name="friendId" value="@friend.Id" />
-                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
                                 </form>
                             </li>
                         }
@@ -196,19 +85,6 @@
                 }
             </div>
         </div>
+
     </div>
 </div>
-
-@functions {
-    public string TransformVideoUrl(string url)
-    {
-        if (string.IsNullOrWhiteSpace(url)) return "";
-        if (url.Contains("youtube.com/watch?v="))
-            return url.Replace("watch?v=", "embed/");
-        if (url.Contains("youtu.be/"))
-            return url.Replace("youtu.be/", "www.youtube.com/embed/");
-        if (url.Contains("vimeo.com/"))
-            return $"https://player.vimeo.com/video/{url.Split('/').Last()}";
-        return url;
-    }
-}

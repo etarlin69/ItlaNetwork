@@ -14,7 +14,7 @@ namespace ItlaNetwork.Core.Application.Services
     public class CommentService : ICommentService
     {
         private readonly ICommentRepository _commentRepository;
-        private readonly IAccountService _accountService; // To get author data
+        private readonly IAccountService _accountService; 
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -26,7 +26,7 @@ namespace ItlaNetwork.Core.Application.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        // This 'Add' method overrides the generic one to return a complete ViewModel for AJAX updates.
+        
         public new async Task<CommentViewModel> Add(SaveCommentViewModel vm)
         {
             var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -37,7 +37,7 @@ namespace ItlaNetwork.Core.Application.Services
 
             comment = await _commentRepository.AddAsync(comment);
 
-            // Stitching logic: After saving, get the author's data to return a complete ViewModel.
+            
             var author = await _accountService.GetUserByIdAsync(currentUserId);
             var commentViewModel = _mapper.Map<CommentViewModel>(comment);
 
@@ -50,7 +50,7 @@ namespace ItlaNetwork.Core.Application.Services
             return commentViewModel;
         }
 
-        // Explicit implementation of the generic Add method.
+        
         async Task<SaveCommentViewModel> IGenericService<SaveCommentViewModel, CommentViewModel, Comment>.Add(SaveCommentViewModel vm)
         {
             var comment = _mapper.Map<Comment>(vm);
@@ -64,7 +64,7 @@ namespace ItlaNetwork.Core.Application.Services
         {
             var comment = _mapper.Map<Comment>(vm);
             var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            comment.UserId = currentUserId; // Ensure UserId is preserved on update
+            comment.UserId = currentUserId; 
             await _commentRepository.UpdateAsync(comment);
         }
 

@@ -1,0 +1,139 @@
+﻿@model List<ItlaNetwork.Core.Application.ViewModels.Battleship.GameSummaryViewModel>
+
+@using ItlaNetwork.Core.Application.ViewModels.Friendship
+@using ItlaNetwork.Core.Application.ViewModels.Battleship
+
+@{
+    ViewData["Title"] = "Mis Partidas";
+
+    
+    var friends = ViewBag.Friends as List<FriendViewModel> ?? new List<FriendViewModel>();
+    var incoming = ViewBag.IncomingRequests as List<GameRequestViewModel> ?? new List<GameRequestViewModel>();
+
+    
+    var activeOpponents = Model.Where(g => !g.IsFinished).Select(g => g.OpponentId).ToHashSet();
+    var availableFriends = friends.Where(f => !activeOpponents.Contains(f.Id)).ToList();
+
+    
+    var activeGames = Model.Where(g => !g.IsFinished).ToList();
+    var finishedGames = Model.Where(g => g.IsFinished).ToList();
+}
+
+<div class="container main-container">
+    <h3 class="text-white mb-4">@ViewData["Title"]</h3>
+
+    
+    <h5 class="text-white">Reta a un amigo</h5>
+    @if (!availableFriends.Any())
+    {
+        <p class="text-white-50">No tienes amigos disponibles para retar.</p>
+    }
+    else
+    {
+        <ul class="list-group mb-5">
+            @foreach (var f in availableFriends)
+            {
+                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-astronaut fa-2x text-white me-3"></i>
+                        <span class="text-white">@f.FirstName @f.LastName</span>
+                    </div>
+                    <form asp-controller="GameRequest" asp-action="Send" method="get">
+                        <input type="hidden" name="receiverId" value="@f.Id" />
+                        <button class="btn btn-sm btn-gradient" type="submit">Retar</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    }
+
+    
+    <h5 class="text-white">Te han retado a jugar</h5>
+    @if (!incoming.Any())
+    {
+        <p class="text-white-50">No tienes retos nuevos.</p>
+    }
+    else
+    {
+        <ul class="list-group mb-5">
+            @foreach (var r in incoming)
+            {
+                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-astronaut fa-2x text-white me-3"></i>
+                        <span class="text-white">De @r.SenderFullName</span>
+                    </div>
+                    <div>
+                        <form asp-controller="GameRequest" asp-action="Accept" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@r.RequestId" />
+                            <button class="btn btn-sm btn-success">Aceptar</button>
+                        </form>
+                        <form asp-controller="GameRequest" asp-action="Reject" method="post" class="d-inline ms-2">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@r.RequestId" />
+                            <button class="btn btn-sm btn-danger">Rechazar</button>
+                        </form>
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+
+    
+    <h5 class="text-white">Partidas activas</h5>
+    @if (!activeGames.Any())
+    {
+        <p class="text-white-50">No tienes partidas activas.</p>
+    }
+    else
+    {
+        <div class="list-group mb-5">
+            @foreach (var g in activeGames)
+            {
+                <div class="list-group-item glass-card mb-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1 text-white">Partida #@g.GameId</h5>
+                        <p class="mb-0 text-white-50">Rival: @g.OpponentName</p>
+                    </div>
+                    <div>
+                        <a asp-controller="Battleship"
+                           asp-action="Board"
+                           asp-route-id="@g.GameId"
+                           class="btn btn-sm btn-light me-2">
+                            Entrar
+                        </a>
+                        <form asp-controller="Battleship" asp-action="Surrender" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@g.GameId" />
+                            <button class="btn btn-sm btn-danger">Rendirse</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+   
+    <h5 class="text-white">Historial de partidas</h5>
+    @if (!finishedGames.Any())
+    {
+        <p class="text-white-50">Aún no tienes partidas terminadas.</p>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var g in finishedGames)
+            {
+                <div class="list-group-item glass-card mb-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1 text-white">Partida #@g.GameId</h5>
+                        <p class="mb-0 text-white-50">
+                            Rival: @g.OpponentName — @(g.WinnerId == g.OpponentId ? "Ganaste" : "Perdiste")
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

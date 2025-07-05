@@ -13,16 +13,21 @@ namespace ItlaNetwork.Infrastructure.Persistence.Contexts
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        // DbSets for your business entities remain here.
+        
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<FriendRequest> FriendRequests { get; set; }
+
+        
         public DbSet<Game> Games { get; set; }
         public DbSet<Ship> Ships { get; set; }
         public DbSet<ShipPosition> ShipPositions { get; set; }
         public DbSet<Attack> Attacks { get; set; }
+
+        
+        public DbSet<GameRequest> GameRequests { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
@@ -45,8 +50,7 @@ namespace ItlaNetwork.Infrastructure.Persistence.Contexts
         {
             base.OnModelCreating(modelBuilder);
 
-            // This line will scan the entire Persistence project for IEntityTypeConfiguration classes
-            // and apply their configurations automatically.
+            
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

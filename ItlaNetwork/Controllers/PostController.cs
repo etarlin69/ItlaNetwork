@@ -51,7 +51,7 @@ namespace ItlaNetwork.Controllers
             var postVm = await _postService.GetByIdSaveViewModel(id);
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Verificación de autorización con base en el post recuperado
+            
             var postOwnerId = await _postService.GetPostOwnerIdById(id);
             if (postOwnerId != currentUserId)
             {

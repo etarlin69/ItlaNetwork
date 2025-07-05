@@ -4,7 +4,7 @@ using ItlaNetwork.Core.Domain.Enums;
 namespace ItlaNetwork.Core.Application.ViewModels.Reaction
 {
 
-    // ViewModel para mostrar una reacción
+    
     public class ReactionViewModel
     {
         public int Id { get; set; }

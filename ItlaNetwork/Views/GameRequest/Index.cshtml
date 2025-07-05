@@ -1,0 +1,26 @@
+﻿@model List<ItlaNetwork.Core.Application.ViewModels.Battleship.GameRequestViewModel>
+
+<h5 class="text-white">Te han retado a jugar</h5>
+@if (!Model.Any())
+{
+    <p class="text-white-50">No tienes retos nuevos.</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var r in Model)
+        {
+            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                <span class="text-white">De @r.SenderId</span>
+                <form asp-action="Accept" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@r.RequestId" />
+                    <button class="btn btn-sm btn-success">Aceptar</button>
+                </form>
+                <form asp-action="Reject" method="post" class="d-inline ms-2">
+                    <input type="hidden" name="id" value="@r.RequestId" />
+                    <button class="btn btn-sm btn-danger">Rechazar</button>
+                </form>
+            </li>
+        }
+    </ul>
+}

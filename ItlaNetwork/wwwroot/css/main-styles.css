@@ -1,10 +1,6 @@
-﻿/*
- * =========================================
- * ESTILOS GLOBALES Y LAYOUT PRINCIPAL
- * =========================================
-*/
+﻿
 
-/* --- Estructura Flexbox para el Layout --- */
+
 .main-body {
     display: flex;
     flex-direction: column;
@@ -24,7 +20,7 @@ header, footer {
     overflow-y: auto;
 }
 
-    /* --- ESTILOS PARA LA BARRA DE SCROLL (ACTUALIZADO PARA SER REUTILIZABLE) --- */
+    
     .main-content-area::-webkit-scrollbar,
     .comment-list::-webkit-scrollbar {
         width: 8px;
@@ -49,7 +45,7 @@ header, footer {
             background-color: #89216B;
         }
 
-/* ... (El resto de los estilos de navbar, panel de vidrio, etc. no cambian) ... */
+
 .glass-panel {
     background-color: rgba(0, 0, 0, 0.2) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -104,7 +100,7 @@ header, footer {
 .feed-container {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra las .glass-card si tienen ancho menor */
+    align-items: center; 
     padding: 5px;
     border-radius: 0.75rem;
 }
@@ -115,8 +111,8 @@ header, footer {
     border-radius: 0.75rem;
     padding: 1.5rem;
     margin: 1.5rem auto;
-    max-width: 620px; /* ancho máximo deseado para los posts */
-    width: 100%; /* que se ajuste si la pantalla es más pequeña */
+    max-width: 620px; 
+    width: 100%;
 }
 
 .post-card-header {
@@ -218,11 +214,7 @@ footer.footer {
 }
 
 
-/*
- * =========================================
- * ESTILOS PARA COMENTARIOS (ACTUALIZADO)
- * =========================================
-*/
+
 
 .comments-section {
     margin-top: 1.5rem;
@@ -230,11 +222,11 @@ footer.footer {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* === REGLA AÑADIDA PARA EL SCROLL DE COMENTARIOS === */
+
 .comment-list {
-    max-height: 220px; /* Altura máxima para aprox. 3 comentarios */
-    overflow-y: auto; /* Activa el scroll vertical SÓLO si es necesario */
-    padding-right: 10px; /* Espacio para que el scrollbar no se pegue al contenido */
+    max-height: 220px; 
+    overflow-y: auto; 
+    padding-right: 10px; 
 }
 
 .comment-item {
@@ -304,7 +296,7 @@ footer.footer {
 .no-comments-message {
     padding: 1.5rem;
     text-align: center;
-    color: #94a3b8; /* Un color grisáceo sutil */
+    color: #94a3b8; 
     font-style: italic;
     font-size: 0.9rem;
 }
@@ -322,14 +314,14 @@ footer.footer {
     .user-list-item:last-child {
         border-bottom: none;
     }
-/* --- Estilos para Reacciones --- */
+
 .reaction-container {
     display: flex;
     align-items: center;
 }
 
 .reaction-btn {
-    color: #a0aec0; /* Color grisáceo por defecto */
+    color: #a0aec0; 
     text-decoration: none;
     transition: all 0.2s ease-in-out;
     display: flex;
@@ -341,32 +333,32 @@ footer.footer {
         color: #fff;
     }
 
-    /* Oculta el icono sólido por defecto */
+    
     .reaction-btn .fa-solid {
         display: none;
     }
-    /* Muestra el icono de contorno por defecto */
+    
     .reaction-btn .fa-regular {
         display: inline-block;
     }
 
-    /* Cuando el botón está activo, oculta el icono de contorno */
+    
     .reaction-btn.active .fa-regular {
         display: none;
     }
-    /* Y muestra el icono sólido */
+    
     .reaction-btn.active .fa-solid {
         display: inline-block;
     }
 
-    /* Estado activo para el botón de "Me Gusta" */
+    
     .reaction-btn.like.active {
-        color: #ef4444; /* Rojo para el like */
+        color: #ef4444; 
     }
 
-    /* Estado activo para el botón de "No me Gusta" */
+    
     .reaction-btn.dislike.active {
-        color: #fff; /* Blanco brillante para el dislike */
+        color: #fff; 
     }
 
 .reaction-count {
@@ -405,8 +397,8 @@ footer.footer {
     }
 
 .modal-content {
-    /* Aplicamos el mismo efecto de vidrio de las tarjetas */
-    background-color: rgba(42, 13, 19, 0.85); /* Un poco más oscuro para que resalte */
+    
+    background-color: rgba(42, 13, 19, 0.85); 
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -423,7 +415,7 @@ footer.footer {
 
 .post-video-container {
     position: relative;
-    padding-bottom: 56.25%; /* proporción 16:9 */
+    padding-bottom: 56.25%; 
     height: 0;
     overflow: hidden;
     border-radius: 0.5rem;
@@ -437,3 +429,46 @@ footer.footer {
         height: 100%;
         border: none;
     }
+
+
+table#battleship-grid {
+    border-collapse: collapse;
+    margin: auto;
+    user-select: none;
+}
+
+    table#battleship-grid td {
+        width: 30px;
+        height: 30px;
+        border: 1px solid rgba(255,255,255,0.2);
+        cursor: pointer;
+        transition: background 0.2s ease-in-out;
+    }
+
+
+.cell-unknown {
+    background-color: rgba(255,255,255,0.05);
+}
+
+
+.cell-ship {
+    background-color: rgba(0,150,0,0.5);
+}
+
+
+.cell-selected {
+    background-color: rgba(255,215,0,0.6);
+    outline: 1px solid gold;
+}
+
+
+.cell-hit {
+    background-color: #ef4444 !important; 
+}
+
+
+.cell-miss {
+    background-color: #64748b !important; 
+}
+
+

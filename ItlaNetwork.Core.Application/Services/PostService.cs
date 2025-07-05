@@ -42,11 +42,9 @@ namespace ItlaNetwork.Core.Application.Services
             var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(currentUserId)) return null;
 
-            // Evitar que Content sea null al guardar en BD
+            
             if (string.IsNullOrWhiteSpace(vm.Content))
-            {
                 vm.Content = "";
-            }
 
             var post = _mapper.Map<Post>(vm);
             post.UserId = currentUserId;
@@ -61,13 +59,10 @@ namespace ItlaNetwork.Core.Application.Services
             if (existingPost == null) return;
 
             var updatedPost = _mapper.Map<Post>(vm);
-            updatedPost.UserId = existingPost.UserId; // preservar autor original
+            updatedPost.UserId = existingPost.UserId; 
 
-            // Asegurar que Content no sea null
             if (string.IsNullOrWhiteSpace(updatedPost.Content))
-            {
                 updatedPost.Content = "";
-            }
 
             await _postRepository.UpdateAsync(updatedPost);
         }
@@ -99,18 +94,25 @@ namespace ItlaNetwork.Core.Application.Services
             if (postList == null || !postList.Any())
                 return new List<PostViewModel>();
 
+            
             var postViewModels = _mapper.Map<List<PostViewModel>>(postList);
             var postIds = postList.Select(p => p.Id).ToList();
 
+            
             var allComments = await _commentRepository.GetAllByPostIdListAsync(postIds);
             var allReactions = await _reactionRepository.GetAllByPostIdListAsync(postIds);
+
+            
             var allUserIds = postList.Select(p => p.UserId)
                                      .Union(allComments.Select(c => c.UserId))
-                                     .Distinct().ToList();
+                                     .Distinct()
+                                     .ToList();
             var users = await _accountService.GetUsersByIdsAsync(allUserIds);
 
+            
             foreach (var postVm in postViewModels)
             {
+                
                 var author = users.FirstOrDefault(u => u.Id == postVm.UserId);
                 if (author != null)
                 {
@@ -119,6 +121,7 @@ namespace ItlaNetwork.Core.Application.Services
                     postVm.AuthorProfilePictureUrl = author.ProfilePictureUrl;
                 }
 
+                
                 var postComments = allComments.Where(c => c.PostId == postVm.Id).ToList();
                 postVm.Comments = postComments.Select(comment =>
                 {
@@ -131,7 +134,9 @@ namespace ItlaNetwork.Core.Application.Services
                     }
                     return commentVm;
                 }).ToList();
+                postVm.CommentsCount = postComments.Count;
 
+                
                 var postReactions = allReactions.Where(r => r.PostId == postVm.Id).ToList();
                 postVm.LikeCount = postReactions.Count(r => r.ReactionType == Core.Domain.Enums.ReactionType.Like);
                 postVm.DislikeCount = postReactions.Count(r => r.ReactionType == Core.Domain.Enums.ReactionType.Dislike);
@@ -139,7 +144,9 @@ namespace ItlaNetwork.Core.Application.Services
                 postVm.CurrentUserReaction = currentUserReaction?.ReactionType;
             }
 
-            return postViewModels.OrderByDescending(p => p.CreatedAt).ToList();
+            return postViewModels
+                   .OrderByDescending(p => p.CreatedAt)
+                   .ToList();
         }
     }
 }

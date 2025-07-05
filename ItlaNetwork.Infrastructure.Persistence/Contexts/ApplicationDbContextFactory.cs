@@ -9,7 +9,7 @@ namespace ItlaNetwork.Infrastructure.Persistence.Contexts
     {
         public ApplicationDbContext CreateDbContext(string[] args)
         {
-            // The EF Core tools set the current directory to the startup project's path.
+            
             string basePath = Directory.GetCurrentDirectory();
 
             IConfigurationRoot configuration = new ConfigurationBuilder()

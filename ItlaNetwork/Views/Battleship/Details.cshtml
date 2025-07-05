@@ -1,0 +1,125 @@
+﻿@*
+@using System.Security.Claims
+@model ItlaNetwork.Core.Application.ViewModels.Battleship.GameResultViewModel
+
+@{
+    ViewData["Title"] = $"Resultado de Partida #{Model.GameId}";
+    var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    Func<int, string> attackBg = v =>
+        v == 2 ? "rgba(239,68,68,0.6)" :
+        v == 3 ? "rgba(156,163,175,0.6)" :
+                 "transparent";
+    Func<int, string> shipBg = v =>
+        v == 1 ? "rgba(255,255,255,0.6)" : "transparent";
+}
+
+<div class="container main-container">
+    <h3 class="text-white mb-4">Resultado de Partida #@Model.GameId</h3>
+
+    <div class="text-white mb-4">
+        <p><strong>Oponente:</strong> @Model.OpponentName</p>
+        <p>
+            <strong>Ganador:</strong>
+            @(Model.WinnerId == playerId ? "Tú" : Model.OpponentName)
+        </p>
+        <p>
+            <strong>Inició:</strong>
+            @Model.CreatedAt.ToLocalTime().ToString("g")
+            &nbsp;|&nbsp;
+            <strong>Finalizó:</strong>
+            @Model.FinishedAt.ToLocalTime().ToString("g")
+        </p>
+        <p>
+            <strong>Duración:</strong>
+            @Model.Duration.ToString(@"hh\:mm\:ss")
+        </p>
+    </div>
+
+    <div class="row gy-4">
+        
+        <div class="col-md-4">
+            <h5 class="text-white">Mis ataques</h5>
+            <table class="table table-dark table-bordered mb-0" style="border-collapse:collapse;">
+                <tbody>
+                    @for (int r = 0; r < 12; r++)
+                    {
+                        <tr>
+                            @for (int c = 0; c < 12; c++)
+                            {
+                                <td style="
+                                            width: calc(100%/12);
+                                            padding: 0;
+                                            height: calc(300px/12);
+                                            background-color: @attackBg(Model.AttackGrid[r, c]);
+                                            border:1px solid rgba(255,255,255,0.1);
+                                        ">
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        
+        <div class="col-md-4">
+            <h5 class="text-white">Mi flota</h5>
+            <table class="table table-dark table-bordered mb-0" style="border-collapse:collapse;">
+                <tbody>
+                    @for (int r = 0; r < 12; r++)
+                    {
+                        <tr>
+                            @for (int c = 0; c < 12; c++)
+                            {
+                                <td style="
+                                            width: calc(100%/12);
+                                            padding: 0;
+                                            height: calc(300px/12);
+                                            background-color: @shipBg(Model.MyPlacementGrid[r, c]);
+                                            border:1px solid rgba(255,255,255,0.1);
+                                        ">
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        
+        <div class="col-md-4">
+            <h5 class="text-white">Flota oponente</h5>
+            <table class="table table-dark table-bordered mb-0" style="border-collapse:collapse;">
+                <tbody>
+                    @for (int r = 0; r < 12; r++)
+                    {
+                        <tr>
+                            @for (int c = 0; c < 12; c++)
+                            {
+                                <td style="
+                                            width: calc(100%/12);
+                                            padding: 0;
+                                            height: calc(300px/12);
+                                            background-color: @shipBg(Model.OpponentPlacementGrid[r, c]);
+                                            border:1px solid rgba(255,255,255,0.1);
+                                        ">
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-sm btn-light">
+            Volver al listado
+        </a>
+    </div>
+</div>
+*@
+
+
+
+

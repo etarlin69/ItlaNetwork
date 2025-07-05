@@ -39,26 +39,26 @@
     }
 </div>
 
-@* --- SECCIÓN DE REACCIONES SIMPLIFICADA Y CORREGIDA --- *@
+
 <div class="card-footer bg-transparent border-top-0 pt-3 d-flex align-items-center gap-4">
     @{
-        // Se determina si el botón de like o dislike debe tener la clase 'active'
+        
         var likeBtnClass = Model.CurrentUserReaction == ReactionType.Like ? "like active" : "like";
         var dislikeBtnClass = Model.CurrentUserReaction == ReactionType.Dislike ? "dislike active" : "dislike";
     }
 
     <a href="#" class="reaction-btn @likeBtnClass" data-post-id="@Model.Id" data-reaction-type="Like">
         <span class="reaction-icon-container">
-            <i class="fa-solid fa-heart"></i>      @* Icono sólido (para estado activo) *@
-            <i class="fa-regular fa-heart"></i>    @* Icono de contorno (para estado inactivo) *@
+            <i class="fa-solid fa-heart"></i>      
+            <i class="fa-regular fa-heart"></i>    
         </span>
         <span class="like-count">@Model.LikeCount</span>
     </a>
 
     <a href="#" class="reaction-btn @dislikeBtnClass" data-post-id="@Model.Id" data-reaction-type="Dislike">
         <span class="reaction-icon-container">
-            <i class="fa-solid fa-thumbs-down"></i>   @* Icono sólido *@
-            <i class="fa-regular fa-thumbs-down"></i> @* Icono de contorno *@
+            <i class="fa-solid fa-thumbs-down"></i>   
+            <i class="fa-regular fa-thumbs-down"></i> 
         </span>
         <span class="dislike-count">@Model.DislikeCount</span>
     </a>

@@ -16,10 +16,10 @@ namespace ItlaNetwork.Core.Application.Interfaces.Services
         Task<List<FriendRequestViewModel>> GetSentFriendRequests();
         Task<List<FriendViewModel>> GetPotentialFriends(string userNameQuery);
 
-        // Nuevo: posts de todos mis amigos
+        
         Task<List<PostViewModel>> GetFriendsPostsAsync();
 
-        // Nuevo: posts de un amigo concreto
+        
         Task<List<PostViewModel>> GetPostsByFriendAsync(string friendUserId);
     }
 }

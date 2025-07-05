@@ -6,6 +6,6 @@ namespace ItlaNetwork.Core.Application.Interfaces.Repositories
     public interface ICommentRepository : IGenericRepository<Comment>
     {
         Task<List<Comment>> GetAllByPostIdAsync(int postId);
-        Task<List<Comment>> GetAllByPostIdListAsync(List<int> postIds); // Esencial para la optimización
+        Task<List<Comment>> GetAllByPostIdListAsync(List<int> postIds); 
     }
 }

@@ -18,20 +18,20 @@ namespace ItlaNetwork.Infrastructure.Persistence.Repositories
         public virtual async Task<T> AddAsync(T entity)
         {
             await _dbContext.Set<T>().AddAsync(entity);
-            await _dbContext.SaveChangesAsync(); // <-- Esta línea es crucial para guardar.
+            await _dbContext.SaveChangesAsync(); 
             return entity;
         }
 
         public virtual async Task UpdateAsync(T entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync(); // <-- Crucial para actualizar.
+            await _dbContext.SaveChangesAsync(); 
         }
 
         public virtual async Task DeleteAsync(T entity)
         {
             _dbContext.Set<T>().Remove(entity);
-            await _dbContext.SaveChangesAsync(); // <-- Crucial para borrar.
+            await _dbContext.SaveChangesAsync(); 
         }
 
         public virtual async Task<List<T>> GetAllAsync()

@@ -2,6 +2,7 @@
 @{
     Layout = null;
     ViewData["Title"] = "Registro";
+    var hasErrors = ViewData.ModelState.ErrorCount > 0;
 }
 
 <!DOCTYPE html>
@@ -22,8 +23,18 @@
             <h2 class="text-uppercase">Crear una Cuenta</h2>
         </div>
 
-        @* Este ValidationSummary mostrará errores de lógica (ej. "usuario ya existe"). *@
-        <div asp-validation-summary="All" class="alert alert-danger bg-danger text-white border-0" role="alert"></div>
+        
+        @if (hasErrors)
+        {
+            <div asp-validation-summary="All"
+                 class="alert alert-danger alert-dismissible fade show"
+                 role="alert">
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Cerrar"></button>
+            </div>
+        }
 
         <form asp-controller="Account" asp-action="Register" method="post" class="p-2">
             <div class="row">

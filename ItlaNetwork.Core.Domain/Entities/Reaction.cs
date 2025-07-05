@@ -5,7 +5,7 @@ namespace ItlaNetwork.Core.Domain.Entities
     public class Reaction : AuditableBaseEntity
     {
         public ReactionType ReactionType { get; set; }
-        public int PostId { get; set; } // Clave Foránea
-        public string UserId { get; set; } // Clave Foránea
+        public int PostId { get; set; } 
+        public string UserId { get; set; }
     }
 }

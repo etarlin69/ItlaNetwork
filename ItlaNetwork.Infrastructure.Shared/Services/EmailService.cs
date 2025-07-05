@@ -12,7 +12,7 @@ namespace ItlaNetwork.Infrastructure.Shared.Services
     {
         private readonly MailSettings _mailSettings;
 
-        // Inyectamos la configuración de MailSettings usando IOptions
+        
         public EmailService(IOptions<MailSettings> mailSettings)
         {
             _mailSettings = mailSettings.Value;
@@ -20,10 +20,10 @@ namespace ItlaNetwork.Infrastructure.Shared.Services
 
         public async Task SendAsync(EmailRequest request)
         {
-            // --- VERIFICACIÓN DE NULOS AÑADIDA ---
+            
             if (string.IsNullOrEmpty(request.To) || string.IsNullOrEmpty(_mailSettings.EmailFrom))
             {
-                // Esto previene el error "Value cannot be null"
+                
                 throw new System.ArgumentNullException("La dirección de correo del destinatario o del remitente no puede ser nula.");
             }
 
@@ -46,8 +46,7 @@ namespace ItlaNetwork.Infrastructure.Shared.Services
             }
             catch (System.Exception ex)
             {
-                // En un futuro, aquí podrías registrar el error en un log.
-                // Por ahora, lo relanzamos para que se vea en la consola de depuración.
+                
                 throw;
             }
         }

@@ -1,8 +1,12 @@
 using System;
-using ItlaNetwork.Core.Application;
-using ItlaNetwork.Infrastructure.Persistence;
+using ItlaNetwork.Core.Application.Interfaces.Services;
+using ItlaNetwork.Core.Application.Services;
+using ItlaNetwork.Core.Application.Interfaces.Repositories;
+using ItlaNetwork.Infrastructure.Persistence.Repositories;
 using ItlaNetwork.Infrastructure.Shared;
 using ItlaNetwork.Infrastructure.Identity;
+using ItlaNetwork.Infrastructure.Persistence;
+using ItlaNetwork.Core.Application;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,16 +21,15 @@ using ItlaNetwork.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-// 1) Añade MVC
+
 builder.Services.AddControllersWithViews();
 
-// 2) AutoMapper: escanea todos los perfiles en los ensamblados cargados
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-// 3) Servicios para sesión y contexto de usuario
+
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddDistributedMemoryCache();
-
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromHours(1);
@@ -34,15 +37,21 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// 4) Registra las capas de Onion
+
 builder.Services.AddPersistenceInfrastructure(configuration);
 builder.Services.AddApplicationLayer();
 builder.Services.AddSharedInfrastructure(configuration);
 builder.Services.AddIdentityInfrastructure(configuration);
 
+
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IShipRepository, ShipRepository>();
+builder.Services.AddScoped<IShipPositionRepository, ShipPositionRepository>();
+builder.Services.AddScoped<IAttackRepository, AttackRepository>();
+
 var app = builder.Build();
 
-// 5) Seeding de usuarios/roles
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -59,7 +68,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// 6) Pipeline HTTP
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -70,9 +79,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// --- CORRECCIÓN CRÍTICA EN EL ORDEN DEL MIDDLEWARE ---
-// La sesión DEBE registrarse ANTES de la autenticación y autorización
-// para que los datos del usuario estén disponibles cuando se validen las credenciales.
+
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();

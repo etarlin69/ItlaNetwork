@@ -5,7 +5,7 @@ namespace ItlaNetwork.Core.Domain.Entities
     {
         public int Size { get; set; }
         public bool IsSunk { get; set; }
-        public int GameId { get; set; } // Clave Foránea
-        public string PlayerId { get; set; } // Clave Foránea
+        public int GameId { get; set; } 
+        public string PlayerId { get; set; } 
     }
 }

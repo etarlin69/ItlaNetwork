@@ -1,0 +1,327 @@
+﻿@using System.Security.Claims
+@model ItlaNetwork.Core.Application.ViewModels.Battleship.BoardViewModel
+
+@{
+    ViewData["Title"] = $"Partida #{Model.GameId}";
+    var playerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var showPlacement = !Model.MyFleetPlaced;
+    var showWaiting = Model.MyFleetPlaced && !Model.OpponentFleetPlaced;
+    var showBattle = Model.MyFleetPlaced && Model.OpponentFleetPlaced;
+    var winnerId = string.IsNullOrEmpty(Model.WinnerId) ? null : Model.WinnerId;
+    var canAttack = Model.IsMyTurn && Model.OpponentFleetPlaced && winnerId == null;
+}
+
+<div class="container main-container">
+    <div class="row">
+        
+        <div class="col-lg-3">
+            
+            <div id="placement-panel"
+                 class="glass-card p-3 mb-4 @(showPlacement ? "" : "d-none")">
+                <h5 class="text-white">Tus Barcos</h5>
+                <hr class="border-secondary" />
+                @{
+                    var shipTypes = new[] {
+                                new { Key="portaaviones", Name="Portaaviones", Size=5 },
+                                new { Key="acorazado",    Name="Acorazado",   Size=4 },
+                                new { Key="crucero",      Name="Crucero",     Size=3 },
+                                new { Key="submarino",    Name="Submarino",   Size=3 },
+                                new { Key="patrullero",   Name="Patrullero",  Size=2 }
+                                };
+                }
+                <div id="ship-selection-panel">
+                    @foreach (var st in shipTypes)
+                    {
+                        <div class="mb-2">
+                            <button type="button"
+                                    class="btn btn-outline-light w-100 ship-btn"
+                                    data-key="@st.Key"
+                                    data-size="@st.Size"
+                                    id="ship-@st.Key">
+                                @st.Name (@st.Size) — restantes:
+                                <span id="remaining-@st.Key">1</span>
+                            </button>
+                        </div>
+                    }
+                    <div class="mb-3">
+                        <label class="form-label text-white">Orientación</label>
+                        <select id="orientation" class="form-select">
+                            <option value="horizontal">Horizontal</option>
+                            <option value="vertical">Vertical</option>
+                        </select>
+                    </div>
+                    <button id="confirm-placement"
+                            class="btn btn-gradient w-100 mb-2"
+                            disabled>
+                        Confirmar colocación
+                    </button>
+                    <button id="finish-fleet-btn"
+                            class="btn btn-gradient w-100"
+                            style="display:none;">
+                        Terminar flota
+                    </button>
+                </div>
+            </div>
+
+            
+            <div id="waiting-panel"
+                 class="glass-card p-3 mb-4 text-center @(showWaiting ? "" : "d-none")">
+                <h5 class="text-white">Esperando rival…</h5>
+                <p class="text-white-50">El oponente aún no ha colocado su flota.</p>
+            </div>
+
+            
+            <div id="battle-panel"
+                 class="glass-card p-3 mb-4 text-center @(showBattle ? "" : "d-none")">
+                <h5 class="text-white">Turno de:</h5>
+                <p class="text-white-50">@((Model.IsMyTurn) ? "Tú" : "Oponente")</p>
+                @if (winnerId != null)
+                {
+                    <p class="text-white mt-3">
+                        Ganador: @(winnerId == playerId ? "Tú" : "Oponente")
+                    </p>
+                }
+            </div>
+        </div>
+
+        
+        <div class="col-lg-9">
+            <div class="glass-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="text-white mb-0">Partida #@Model.GameId</h4>
+                    <div>
+                        <button type="button"
+                                class="btn btn-sm btn-secondary me-2"
+                                onclick="location.reload();">
+                            Refrescar
+                        </button>
+                        <a asp-controller="Battleship"
+                           asp-action="Index"
+                           class="btn btn-sm btn-light me-2">
+                            Volver atrás
+                        </a>
+                        <form asp-action="Surrender" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.GameId" />
+                            <button type="submit"
+                                    class="btn btn-sm btn-danger">
+                                Rendirse
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="board" class="d-flex justify-content-center">
+                    <table id="grid"
+                           class="m-0 p-0"
+                           style="border-collapse: collapse; width:100%; max-width:600px;">
+                        <tbody>
+                            @for (int r = 0; r < 12; r++)
+                            {
+                                <tr>
+                                    @for (int c = 0; c < 12; c++)
+                                    {
+                                        var cell = Model.Grid[r, c];
+                                        string bg;
+                                        
+                                        if (cell == 2)
+                                            bg = "rgba(34,197,94,0.6)";
+                                        else if (cell == 4)
+                                            bg = "rgba(239,68,68,0.6)";
+                                        else if (cell == 3)
+                                            bg = "rgba(255,255,255,0.6)";
+                                        else
+                                            bg = "transparent";
+
+                                        <td data-row="@r"
+                                            data-col="@c"
+                                            style="
+                                                        width:calc(100%/12);
+                                                        padding:0;
+                                                        border:1px solid rgba(255,255,255,0.1);
+                                                        height:calc(600px/12);
+                                                        cursor:@(canAttack ? "pointer" : "default");
+                                                        background-color:@bg;
+                                                    ">
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="text-center text-white-50 mt-3">
+                    @if (!Model.MyFleetPlaced)
+                    {
+                        @:Coloca tu flota para empezar.
+                    }
+                    else if (!Model.OpponentFleetPlaced)
+                    {
+                        @:Esperando al oponente.
+                    }
+                    else if (winnerId != null)
+                    {
+                        @:Partida finalizada.
+                    }
+                    else if (Model.IsMyTurn)
+                    {
+                        @:Tu turno: haz clic para atacar.
+                    }
+                    else
+                    {
+                        @:Turno del oponente.
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const canAttack = @canAttack.ToString().ToLower();
+            const cells     = document.querySelectorAll('#grid td');
+
+            
+            if (!canAttack) {
+                const remaining    = { portaaviones:1, acorazado:1, crucero:1, submarino:1, patrullero:1 };
+                const placementMap = {};
+                const placed       = [];
+                let selectedKey    = null;
+                let selectedSize   = 0;
+                let orientation    = 'horizontal';
+
+                function updateButtons() {
+                    document.querySelectorAll('.ship-btn').forEach(btn => {
+                        const key = btn.dataset.key;
+                        btn.disabled = remaining[key] <= 0;
+                        btn.classList.toggle('active', selectedKey === key);
+                    });
+                    document.getElementById('confirm-placement').disabled = !selectedKey;
+                    const totalLeft = Object.values(remaining).reduce((a,b)=>a+b,0);
+                    if (totalLeft === 0) {
+                        document.querySelectorAll('#ship-selection-panel > *')
+                            .forEach(el=>{ if(el.id!=='finish-fleet-btn') el.style.display='none'; });
+                        document.getElementById('finish-fleet-btn').style.display='block';
+                    }
+                }
+
+                document.querySelectorAll('.ship-btn').forEach(btn=>{
+                    btn.addEventListener('click',()=>{
+                        selectedKey  = btn.dataset.key;
+                        selectedSize = parseInt(btn.dataset.size,10);
+                        updateButtons();
+                    });
+                });
+                document.getElementById('orientation')
+                        .addEventListener('change', e=> orientation = e.target.value);
+
+                cells.forEach(cell=>{
+                    cell.addEventListener('mouseenter',()=>{
+                        if(!selectedKey) return;
+                        const r=+cell.dataset.row, c=+cell.dataset.col;
+                        cells.forEach(td=>{
+                            const k = td.dataset.row+','+td.dataset.col;
+                            if(!placed.includes(k)) td.style.backgroundColor='transparent';
+                        });
+                        for(let i=0;i<selectedSize;i++){
+                            const rr=orientation==='horizontal'?r:r+i;
+                            const cc=orientation==='horizontal'?c+i:c;
+                            const td=document.querySelector(
+                                `#grid td[data-row="${rr}"][data-col="${cc}"]`);
+                            const k=`${rr},${cc}`;
+                            if(td&&!placed.includes(k)) td.style.backgroundColor='rgba(255,255,255,0.2)';
+                        }
+                    });
+                    cell.addEventListener('mouseleave',()=>{
+                        cells.forEach(td=>{
+                            const k = td.dataset.row+','+td.dataset.col;
+                            if(!placed.includes(k)) td.style.backgroundColor='transparent';
+                        });
+                    });
+                    cell.addEventListener('click',()=>{
+                        if(!selectedKey) return;
+                        const r=+cell.dataset.row, c=+cell.dataset.col;
+                        const coords=[];
+                        for(let i=0;i<selectedSize;i++){
+                            const rr=orientation==='horizontal'?r:r+i;
+                            const cc=orientation==='horizontal'?c+i:c;
+                            coords.push({rr,cc});
+                        }
+                        if(coords.some(p=>p.rr<0||p.rr>=12||p.cc<0||p.cc>=12))
+                            return alert('Fuera de rango.');
+                        if(coords.some(p=>placed.includes(`${p.rr},${p.cc}`)))
+                            return alert('Solapamiento.');
+                        coords.forEach(p=>{
+                            const td=document.querySelector(
+                                `#grid td[data-row="${p.rr}"][data-col="${p.cc}"]`);
+                            td.style.backgroundColor='rgba(255,255,255,0.6)';
+                            placed.push(`${p.rr},${p.cc}`);
+                            placementMap[`${p.rr},${p.cc}`]=selectedKey;
+                        });
+                        remaining[selectedKey]--;
+                        document.getElementById(`remaining-${selectedKey}`)
+                                .innerText=remaining[selectedKey];
+                        selectedKey=null; selectedSize=0; updateButtons();
+                    });
+                });
+
+                document.getElementById('confirm-placement')
+                        .addEventListener('click',()=>alert('Barco confirmado.'));
+                document.getElementById('finish-fleet-btn')
+                        .addEventListener('click',async()=>{
+                            const fleet=Object.entries(placementMap).reduce((acc,[coord,key])=>{
+                                const [r,c]=coord.split(',').map(Number);
+                                let ship=acc.find(s=>s.key===key);
+                                if(!ship){
+                                    const size=parseInt(
+                                        document.querySelector(`#ship-${key}`).dataset.size,10);
+                                    ship={key,size,coords:[]};
+                                    acc.push(ship);
+                                }
+                                ship.coords.push({row:r,col:c});
+                                return acc;
+                            },[]);
+                            const dto={gameId:@Model.GameId,playerId:'@playerId',ships:fleet};
+                            try{
+                                const resp=await fetch('/Battleship/PlaceFleet',{
+                                    method:'POST',
+                                    headers:{'Content-Type':'application/json'},
+                                    body:JSON.stringify(dto)
+                                });
+                                if(!resp.ok) throw 'Error colocando flota';
+                                location.reload();
+                            }catch(err){
+                                console.error(err);
+                                alert('No se pudo enviar la flota.');
+                            }
+                        });
+            }
+
+            
+            if (canAttack) {
+                cells.forEach(td=>{
+                    td.addEventListener('click',async()=>{
+                        const row=+td.getAttribute('data-row'),
+                              col=+td.getAttribute('data-col');
+                        try{
+                            const res=await fetch('/Battleship/Attack',{
+                                method:'POST',
+                                headers:{'Content-Type':'application/json'},
+                                body:JSON.stringify({gameId:@Model.GameId,row,col})
+                            });
+                            if(!res.ok) throw 'Error al atacar';
+                            await res.json();
+                            location.reload();
+                        }catch(err){
+                            console.error(err);
+                            alert('No se pudo procesar el ataque.');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+}

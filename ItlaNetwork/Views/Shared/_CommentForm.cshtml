@@ -5,10 +5,10 @@
       asp-action="Save"
       method="post"
       class="mb-3">
-    @* Para comentarios sobre post *@
+    
     <input type="hidden" asp-for="PostId" />
 
-    @* Para replies si agregaste esa propiedad *@
+    
     @if (Model.ParentCommentId.HasValue)
     {
         <input type="hidden" asp-for="ParentCommentId" />

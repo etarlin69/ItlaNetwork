@@ -12,7 +12,6 @@ namespace ItlaNetwork.Core.Application.ViewModels.Account
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        // Las propiedades HasError y Error han sido eliminadas para simplificar
-        // y usar el sistema de validación estándar de ASP.NET Core.
+        
     }
 }
